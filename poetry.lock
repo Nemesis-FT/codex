@@ -1,0 +1,76 @@
+[[package]]
+name = "neo4j-driver"
+version = "4.4.10"
+description = "Neo4j Bolt driver for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pytz = "*"
+
+[[package]]
+name = "neobolt"
+version = "1.7.17"
+description = "Neo4j Bolt connector for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "neomodel"
+version = "4.0.10"
+description = "An object mapper for the neo4j graph database."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+neo4j-driver = "4.4.10"
+neobolt = "1.7.17"
+pytz = ">=2021.1"
+six = "1.16.0"
+
+[package.extras]
+dev = ["Shapely (>=1.8.1,<1.9)", "pre-commit", "pytest (>=7.1)"]
+
+[[package]]
+name = "pytz"
+version = "2022.7.1"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.10"
+content-hash = "a4e9032ea14d1be44083fabf05f83dc459c400eb621a742e88117038831d51b6"
+
+[metadata.files]
+neo4j-driver = [
+    {file = "neo4j-driver-4.4.10.tar.gz", hash = "sha256:df5e3b96e6991f9de4b79e48c657b34596ec9784b78a00fc273b41af48f4fc4c"},
+]
+neobolt = [
+    {file = "neobolt-1.7.17.tar.gz", hash = "sha256:1d0d5efce7221fc4f0ffc4a315bc5272708be5aa2aef5434269e800372d8db89"},
+]
+neomodel = [
+    {file = "neomodel-4.0.10-py3-none-any.whl", hash = "sha256:70ffddd58a393e87d18ab3ebbb4d677fa2d739de4411d5040208eb7e129d601e"},
+    {file = "neomodel-4.0.10.tar.gz", hash = "sha256:ca8ee1e14d00d9ad7519744bd8b26d2d4f1770e0c51038c3fe83ea799dcfec50"},
+]
+pytz = [
+    {file = "pytz-2022.7.1-py2.py3-none-any.whl", hash = "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"},
+    {file = "pytz-2022.7.1.tar.gz", hash = "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0"},
+]
+six = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
