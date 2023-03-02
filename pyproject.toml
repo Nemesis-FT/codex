@@ -8,6 +8,13 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 neomodel = "^4.0.10"
+fastapi = "^0.92.0"
+uvicorn = "^0.20.0"
+python-dotenv = "^1.0.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+bcrypt = "^4.0.1"
+python-multipart = "^0.0.6"
 
 
 [build-system]
