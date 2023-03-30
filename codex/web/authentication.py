@@ -2,7 +2,7 @@
 Questo modulo contiene utility di autenticazione.
 """
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Optional, Any
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -57,7 +57,7 @@ def get_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(email: str, password: str):
+def authenticate_user(email: str, password: str) -> User:
     """
     Data una combinazione di email e password, verifica se questa combinazione corrisponde ad un utente valido.
     :param email: la mail dell'utente

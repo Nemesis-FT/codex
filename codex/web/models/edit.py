@@ -10,7 +10,7 @@ __all__ = (
 
 class UserEdit(base.ORMModel):
     """
-    **Edit** model for :class:`.database.tables.User`.
+    **Edit** model for :class:`.database.models.User`.
     """
 
     email: str
@@ -23,3 +23,9 @@ class UserEdit(base.ORMModel):
                 "password": "1pippo"
             },
         }
+
+
+class CampaignEdit(base.ORMModel):
+    """
+    **Edit** model for :class:`.database.models.Campaign`.
+    """

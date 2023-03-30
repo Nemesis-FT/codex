@@ -14,6 +14,7 @@ __all__ = (
     "ResourceNotFound",
     "MultipleResultsFound",
     "EntityAlreadyExists",
+    "Denied"
 )
 
 
@@ -70,3 +71,9 @@ class EntityAlreadyExists(ApplicationException):
     STATUS_CODE = 500
     ERROR_CODE = "ALREADY_EXISTS"
     REASON = "Another Entity already exists with the same unique values."
+
+
+class Denied(ApplicationException):
+    STATUS_CODE = 403
+    ERROR_CODE = "DENIED"
+    REASON = "You lack the authority to attempt this action."

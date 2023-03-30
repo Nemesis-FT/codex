@@ -1,9 +1,13 @@
 import logging
 import os
 
+import bcrypt
 import dotenv
 import fastapi.middleware.cors as cors
 import uvicorn
+
+from codex.database import User
+from codex.web.crud import quick_create
 
 logging.basicConfig(level="INFO")
 log = logging.getLogger(__name__)
@@ -22,4 +26,9 @@ app.add_middleware(
 )
 log.info("Running codex application with Uvicorn...")
 # noinspection PyTypeChecker
+if not User.nodes.all():
+    quick_create(
+        User(email="admin@admin.com", password=bcrypt.hashpw(bytes("password", encoding="utf-8"), bcrypt.gensalt()),
+             isAdmin=True)
+    )
 uvicorn.run(app, port=int(os.environ["IS_WEB_PORT"]), host=os.environ["IS_WEB_HOST"])

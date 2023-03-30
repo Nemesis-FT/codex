@@ -1,5 +1,6 @@
-from neomodel import (StructuredNode, StructuredRel, BooleanProperty, StringProperty, IntegerProperty, UniqueIdProperty, RelationshipTo, Relationship, install_labels,
-                      remove_all_labels,install_all_labels, DateProperty, One, ZeroOrMore, OneOrMore)
+from neomodel import (StructuredNode, StructuredRel, BooleanProperty, StringProperty, IntegerProperty, UniqueIdProperty,
+                      RelationshipTo, Relationship, install_labels,
+                      remove_all_labels, install_all_labels, DateProperty, One, ZeroOrMore, OneOrMore)
 from codex.database.db import db
 
 __all__ = (
@@ -16,8 +17,10 @@ class CharacterHistoryRel(StructuredRel):
 
 
 class User(StructuredNode):
-    email = StringProperty(unique_index=True, required=True)
+    uid = UniqueIdProperty()
+    email = StringProperty(unique_index=True)
     password = StringProperty(required=True)
+    isAdmin = BooleanProperty(default=False)
 
     characters = RelationshipTo("Character", "CREATED", ZeroOrMore)
     partecipations = RelationshipTo("Campaign", "PARTECIPATES", cardinality=ZeroOrMore, model=PartecipationRel)
@@ -26,6 +29,7 @@ class User(StructuredNode):
 
 
 class Campaign(StructuredNode):
+    uid = UniqueIdProperty()
     name = StringProperty(required=True)
     start_date = DateProperty(required=True)
     end_date = DateProperty(required=False)
@@ -39,6 +43,7 @@ class Campaign(StructuredNode):
 
 
 class Character(StructuredNode):
+    uid = UniqueIdProperty()
     name = StringProperty(required=True)
     race = StringProperty(required=True)
     levels = StringProperty(required=False)
@@ -51,6 +56,7 @@ class Character(StructuredNode):
 
 
 class Setting(StructuredNode):
+    uid = UniqueIdProperty()
     timeframe = StringProperty()
     description = StringProperty()
 
@@ -59,7 +65,8 @@ class Setting(StructuredNode):
 
 
 class World(StructuredNode):
-    name = StringProperty(unique_index=True, required=True)
+    uid = UniqueIdProperty()
+    name = StringProperty(unique_index=True)
     descritpion = StringProperty()
 
     creator = RelationshipTo("User", "CREATES", One)
@@ -67,7 +74,8 @@ class World(StructuredNode):
     settings = RelationshipTo("Setting", "HAS", cardinality=ZeroOrMore)
 
 
-#import datetime
-#date = datetime.datetime.now().date()
-#campaign = Campaign(name="Test", start_date=date).save()
-#campaign.dm.connect(User.nodes.get(email="lorenzo.balugani@gmail.com"))
+install_all_labels()
+# import datetime
+# date = datetime.datetime.now().date()
+# campaign = Campaign(name="Test", start_date=date).save()
+# campaign.dm.connect(User.nodes.get(email="lorenzo.balugani@gmail.com"))
