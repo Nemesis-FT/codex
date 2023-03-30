@@ -26,4 +26,4 @@ def quick_update(node, data:pydantic.BaseModel):
     for key, value in data.dict().items():
         setattr(node, key, value)
     node.save()
-    return node.refresh()
+    return node

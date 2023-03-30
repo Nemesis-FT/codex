@@ -4,14 +4,21 @@ from codex.web.models import edit, base
 
 __all__ = (
     "UserRead",
+    "WorldRead"
 )
 
 
 class UserRead(base.ORMModel):
     """
-    **Read** model for :class:`.database.tables.User`.
+    **Read** model for :class:`.database.models.User`.
     """
     uid: str
     email: str
     isAdmin: bool
 
+
+class WorldRead(edit.WorldEdit):
+    """
+    **Read** model for :class: .database.models.World`
+    """
+    uid: str

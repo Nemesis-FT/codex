@@ -67,7 +67,7 @@ class Setting(StructuredNode):
 class World(StructuredNode):
     uid = UniqueIdProperty()
     name = StringProperty(unique_index=True)
-    descritpion = StringProperty()
+    description = StringProperty(required=True)
 
     creator = RelationshipTo("User", "CREATES", One)
     based_on = Relationship("World", "BASED_ON")

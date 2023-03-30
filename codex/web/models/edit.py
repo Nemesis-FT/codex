@@ -5,6 +5,7 @@ from codex.web.models import base
 
 __all__ = (
     "UserEdit",
+    "WorldEdit"
 )
 
 
@@ -16,16 +17,7 @@ class UserEdit(base.ORMModel):
     email: str
     password: str
 
-    class Config(base.ORMModel.Config):
-        schema_extra = {
-            "example": {
-                "email": "pippo@gmail.com",
-                "password": "1pippo"
-            },
-        }
 
-
-class CampaignEdit(base.ORMModel):
-    """
-    **Edit** model for :class:`.database.models.Campaign`.
-    """
+class WorldEdit(base.ORMModel):
+    name: str
+    description: str

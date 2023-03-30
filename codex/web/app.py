@@ -9,7 +9,10 @@ from starlette.exceptions import HTTPException
 
 from codex.web.authentication import authenticate_user, create_token, Token
 from codex.web.errors import ApplicationException
+
 from codex.web.routes.api.user.v1.router import router as user_router
+from codex.web.routes.api.world.v1.router import router as world_router
+
 from neomodel.exceptions import UniqueProperty, MultipleNodesReturned, DoesNotExist
 from handlers import handle_generic_error, handle_application_error, handle_neomodel_not_found, \
     handle_neomodel_not_unique, handle_neomodel_multiple_results
@@ -25,6 +28,7 @@ app = fastapi.FastAPI(
 )
 
 app.include_router(user_router)
+app.include_router(world_router)
 
 app.add_exception_handler(DoesNotExist, handle_neomodel_not_found)
 app.add_exception_handler(UniqueProperty, handle_neomodel_not_unique)
