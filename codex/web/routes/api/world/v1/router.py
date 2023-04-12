@@ -37,6 +37,7 @@ def world_create(*, data: WorldEdit, current_user=Depends(get_current_user)):
     world = quick_create(
         World(name=data.name, description=data.description))
     current_user.worlds.connect(world)
+    world.owner.connect(current_user)
     return world
 
 
@@ -45,4 +46,6 @@ def world_create(*, data: WorldEdit, current_user=Depends(get_current_user)):
               status_code=200, response_model=WorldRead)
 def world_get(*, world_id: str, data: WorldEdit, current_user=Depends(get_current_user)):
     world = World.nodes.get(uid=world_id)
+    if not world.owner.is_connected(current_user):
+        raise Denied
     return quick_update(world, data)

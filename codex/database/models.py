@@ -26,6 +26,7 @@ class User(StructuredNode):
     partecipations = RelationshipTo("Campaign", "PARTECIPATES", cardinality=ZeroOrMore, model=PartecipationRel)
     campaigns = RelationshipTo('Campaign', 'OWNS', cardinality=ZeroOrMore)
     worlds = RelationshipTo("World", "CREATED", cardinality=ZeroOrMore)
+    settings = RelationshipTo("Setting", "CREATED", cardinality=ZeroOrMore)
 
 
 class Campaign(StructuredNode):
@@ -62,6 +63,7 @@ class Setting(StructuredNode):
 
     campaigns = RelationshipTo("Campaign", "HOSTS", cardinality=ZeroOrMore)
     world = RelationshipTo("World", "SET", cardinality=One)
+    owner = RelationshipTo("User", "CREATED", cardinality=One)
 
 
 class World(StructuredNode):

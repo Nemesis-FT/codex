@@ -4,7 +4,8 @@ from codex.web.models import edit, base
 
 __all__ = (
     "UserRead",
-    "WorldRead"
+    "WorldRead",
+    "SettingRead"
 )
 
 
@@ -21,4 +22,8 @@ class WorldRead(edit.WorldEdit):
     """
     **Read** model for :class: .database.models.World`
     """
+    uid: str
+
+
+class SettingRead(edit.SettingEdit):
     uid: str

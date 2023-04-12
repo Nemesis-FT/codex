@@ -5,7 +5,8 @@ from codex.web.models import base
 
 __all__ = (
     "UserEdit",
-    "WorldEdit"
+    "WorldEdit",
+    "SettingEdit"
 )
 
 
@@ -20,4 +21,9 @@ class UserEdit(base.ORMModel):
 
 class WorldEdit(base.ORMModel):
     name: str
+    description: str
+
+
+class SettingEdit(base.ORMModel):
+    timeframe: str
     description: str
