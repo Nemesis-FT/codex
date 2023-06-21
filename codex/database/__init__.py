@@ -1,1 +1,1 @@
-from codex.database.models import User, World, Setting
+from codex.database.models import *

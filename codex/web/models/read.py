@@ -1,11 +1,13 @@
 from datetime import datetime
 from uuid import UUID
+import typing as t
 from codex.web.models import edit, base
 
 __all__ = (
     "UserRead",
     "WorldRead",
-    "SettingRead"
+    "SettingRead",
+    "CharacterRead"
 )
 
 
@@ -27,3 +29,12 @@ class WorldRead(edit.WorldEdit):
 
 class SettingRead(edit.SettingEdit):
     uid: str
+
+
+class CharacterRead(base.ORMModel):
+    uid: str
+    name: str
+    race: str
+    levels: str
+    backstory: t.Optional[str]
+    alive: bool

@@ -44,7 +44,7 @@ def world_create(*, data: WorldEdit, current_user=Depends(get_current_user)):
 @router.patch("/{world_id}",
               summary="Update data about a specific world",
               status_code=200, response_model=WorldRead)
-def world_get(*, world_id: str, data: WorldEdit, current_user=Depends(get_current_user)):
+def world_edit(*, world_id: str, data: WorldEdit, current_user=Depends(get_current_user)):
     world = World.nodes.get(uid=world_id)
     if not world.owner.is_connected(current_user):
         raise Denied

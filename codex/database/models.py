@@ -4,7 +4,7 @@ from neomodel import (StructuredNode, StructuredRel, BooleanProperty, StringProp
 from codex.database.db import db
 
 __all__ = (
-    "User"
+    "User", "World", "Character", "Setting", "Campaign"
 )
 
 

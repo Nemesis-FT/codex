@@ -4,6 +4,7 @@ import abc
 import datetime
 import uuid
 
+import neomodel.cardinality
 import pydantic
 
 
@@ -24,6 +25,8 @@ class Model(pydantic.BaseModel, metaclass=abc.ABCMeta):
                 lambda obj: str(obj),
             datetime.datetime:
                 lambda obj: obj.timestamp(),
+            neomodel.cardinality.One:
+                lambda obj: obj.all()[0]
         }
 
 

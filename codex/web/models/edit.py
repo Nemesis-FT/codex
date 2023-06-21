@@ -6,7 +6,8 @@ from codex.web.models import base
 __all__ = (
     "UserEdit",
     "WorldEdit",
-    "SettingEdit"
+    "SettingEdit",
+    "CharacterEdit"
 )
 
 
@@ -27,3 +28,12 @@ class WorldEdit(base.ORMModel):
 class SettingEdit(base.ORMModel):
     timeframe: str
     description: str
+
+
+class CharacterEdit(base.ORMModel):
+    name: str
+    race: str
+    levels: str
+    backstory: t.Optional[str]
+    alive: bool
+    based_on_id: t.Optional[str]

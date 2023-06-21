@@ -19,21 +19,21 @@ router = fastapi.routing.APIRouter(
 @router.get("/",
             summary="Get the list of available settings",
             status_code=200, response_model=t.List[SettingRead])
-def worlds_get(*, current_user=Depends(get_current_user)):
+def setting_get(*, current_user=Depends(get_current_user)):
     return Setting.nodes.all()
 
 
 @router.get("/{setting_id}",
             summary="Get data about a specific setting",
             status_code=200, response_model=SettingRead)
-def world_get(*, setting_id: str, current_user=Depends(get_current_user)):
+def setting_get(*, setting_id: str, current_user=Depends(get_current_user)):
     return Setting.nodes.get(uid=setting_id)
 
 
 @router.post("/{world_id}",
              summary="Create a new setting related to a world",
              status_code=201, response_model=SettingRead)
-def world_create(*, world_id: str, data: SettingEdit, current_user=Depends(get_current_user)):
+def setting_create(*, world_id: str, data: SettingEdit, current_user=Depends(get_current_user)):
     world = World.nodes.get(uid=world_id)
     setting = quick_create(
         Setting(timeframe=data.timeframe, description=data.description))
@@ -47,7 +47,7 @@ def world_create(*, world_id: str, data: SettingEdit, current_user=Depends(get_c
 @router.patch("/{setting_id}",
               summary="Update data about a specific setting",
               status_code=200, response_model=SettingRead)
-def world_get(*, setting_id: str, data: SettingEdit, current_user=Depends(get_current_user)):
+def setting_edit(*, setting_id: str, data: SettingEdit, current_user=Depends(get_current_user)):
     setting = Setting.nodes.get(uid=setting_id)
     if not setting.owner.is_connected(current_user):
         raise Denied
