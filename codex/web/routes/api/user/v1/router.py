@@ -6,6 +6,7 @@ from codex.web.authentication import get_current_user
 from codex.web.models.edit import UserEdit
 from codex.web.errors import Denied
 from codex.web.models.read import UserRead
+from codex.web.models.full import UserFull
 from codex.web.crud import *
 
 router = fastapi.routing.APIRouter(
@@ -18,9 +19,10 @@ router = fastapi.routing.APIRouter(
 
 @router.get("/me",
             summary="Get data about currently logged in user",
-            status_code=200, response_model=UserRead)
+            status_code=200, response_model=UserFull)
 def user_get(*, current_user=Depends(get_current_user)):
-    return current_user
+    return UserFull(user=current_user, characters=current_user.characters.all(), worlds=current_user.worlds.all(),
+                    settings=current_user.settings.all(), campaigns=current_user.campaigns.all())
 
 
 @router.post("/",

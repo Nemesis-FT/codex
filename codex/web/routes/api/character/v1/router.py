@@ -29,7 +29,7 @@ def chars_get(*, current_user=Depends(get_current_user)):
             status_code=200, response_model=CharacterFull)
 def char_get(*, char_id: str, current_user=Depends(get_current_user)):
     c = Character.nodes.get(uid=char_id)
-    return CharacterFull(character=c, based_on=c.based_on.all(), owner=c.owner.all()[0])
+    return CharacterFull(character=c, based_on=c.based_on.all(), extended_by=c.extended_by.all(), owner=c.owner.all()[0])
 
 
 @router.post("/",
@@ -47,6 +47,7 @@ def char_create(*, data: CharacterEdit, current_user=Depends(get_current_user)):
     if data.based_on_id:
         base = Character.nodes.get(uid=data.based_on_id)
         char.based_on.connect(base)
+        base.extended_by.connect(char)
     return char
 
 

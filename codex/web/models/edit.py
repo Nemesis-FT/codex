@@ -2,12 +2,15 @@ import typing as t
 import pydantic
 from uuid import UUID
 from codex.web.models import base
+import datetime
 
 __all__ = (
     "UserEdit",
     "WorldEdit",
     "SettingEdit",
-    "CharacterEdit"
+    "CharacterEdit",
+    "CampaignEdit",
+    "CharacterHistoryEdit"
 )
 
 
@@ -37,3 +40,15 @@ class CharacterEdit(base.ORMModel):
     backstory: t.Optional[str]
     alive: bool
     based_on_id: t.Optional[str]
+
+
+class CampaignEdit(base.ORMModel):
+    name: str
+    start_date: datetime.date
+    end_date: t.Optional[datetime.date]
+    synopsis: str
+    retelling: str
+
+
+class CharacterHistoryEdit(base.Model):
+    content: str

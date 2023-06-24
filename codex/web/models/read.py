@@ -7,7 +7,9 @@ __all__ = (
     "UserRead",
     "WorldRead",
     "SettingRead",
-    "CharacterRead"
+    "CharacterRead",
+    "CampaignRead",
+    "CharacterHistoryRead"
 )
 
 
@@ -38,3 +40,11 @@ class CharacterRead(base.ORMModel):
     levels: str
     backstory: t.Optional[str]
     alive: bool
+
+
+class CampaignRead(edit.CampaignEdit):
+    uid: str
+
+
+class CharacterHistoryRead(edit.CharacterHistoryEdit):
+    pass

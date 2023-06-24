@@ -6,6 +6,7 @@ from codex.web.errors import Denied
 from codex.web.crud import *
 from codex.web.models.read import WorldRead
 from codex.web.models.edit import WorldEdit
+from codex.web.models.full import WorldFull
 import typing as t
 
 router = fastapi.routing.APIRouter(
@@ -25,9 +26,10 @@ def worlds_get(*, current_user=Depends(get_current_user)):
 
 @router.get("/{world_id}",
             summary="Get data about a specific world",
-            status_code=200, response_model=WorldRead)
+            status_code=200, response_model=WorldFull)
 def world_get(*, world_id: str, current_user=Depends(get_current_user)):
-    return World.nodes.get(uid=world_id)
+    w = World.nodes.get(uid=world_id)
+    return WorldFull(world=w, creator=w.creator.all()[0], based_on=w.based_on.all()[0], settings=w.settings.all())
 
 
 @router.post("/",

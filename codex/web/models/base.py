@@ -25,6 +25,8 @@ class Model(pydantic.BaseModel, metaclass=abc.ABCMeta):
                 lambda obj: str(obj),
             datetime.datetime:
                 lambda obj: obj.timestamp(),
+            datetime.date:
+                lambda obj: obj.isoformat(),
             neomodel.cardinality.One:
                 lambda obj: obj.all()[0]
         }

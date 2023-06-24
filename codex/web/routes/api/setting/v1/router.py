@@ -6,6 +6,7 @@ from codex.web.errors import Denied
 from codex.web.crud import *
 from codex.web.models.read import SettingRead
 from codex.web.models.edit import SettingEdit
+from codex.web.models.full import SettingFull
 import typing as t
 
 router = fastapi.routing.APIRouter(
@@ -25,9 +26,10 @@ def setting_get(*, current_user=Depends(get_current_user)):
 
 @router.get("/{setting_id}",
             summary="Get data about a specific setting",
-            status_code=200, response_model=SettingRead)
+            status_code=200, response_model=SettingFull)
 def setting_get(*, setting_id: str, current_user=Depends(get_current_user)):
-    return Setting.nodes.get(uid=setting_id)
+    s = Setting.nodes.get(uid=setting_id)
+    return SettingFull(setting=s, campaigns=s.campaigns.all(), world=s.world.all()[0], owner=s.owner.all()[0])
 
 
 @router.post("/{world_id}",

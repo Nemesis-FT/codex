@@ -14,6 +14,7 @@ from codex.web.routes.api.user.v1.router import router as user_router
 from codex.web.routes.api.world.v1.router import router as world_router
 from codex.web.routes.api.setting.v1.router import router as setting_router
 from codex.web.routes.api.character.v1.router import router as character_router
+from codex.web.routes.api.campaign.v1.router import router as campaign_router
 
 from neomodel.exceptions import UniqueProperty, MultipleNodesReturned, DoesNotExist
 from handlers import handle_generic_error, handle_application_error, handle_neomodel_not_found, \
@@ -33,6 +34,7 @@ app.include_router(user_router)
 app.include_router(world_router)
 app.include_router(setting_router)
 app.include_router(character_router)
+app.include_router(campaign_router)
 
 app.add_exception_handler(DoesNotExist, handle_neomodel_not_found)
 app.add_exception_handler(UniqueProperty, handle_neomodel_not_unique)

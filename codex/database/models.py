@@ -1,6 +1,6 @@
 from neomodel import (StructuredNode, StructuredRel, BooleanProperty, StringProperty, IntegerProperty, UniqueIdProperty,
                       RelationshipTo, Relationship, install_labels,
-                      remove_all_labels, install_all_labels, DateProperty, One, ZeroOrMore, OneOrMore)
+                      remove_all_labels, install_all_labels, DateProperty, One, ZeroOrMore, ZeroOrOne, OneOrMore)
 from codex.database.db import db
 
 __all__ = (
@@ -39,7 +39,7 @@ class Campaign(StructuredNode):
 
     members = RelationshipTo("User", "PLAYED", cardinality=ZeroOrMore, model=PartecipationRel)
     dm = RelationshipTo('User', 'HOSTS', cardinality=One)
-    setting = RelationshipTo("Setting", "SET", cardinality=One)
+    setting = RelationshipTo("Setting", "SET", cardinality=ZeroOrMore)
     happenings = RelationshipTo("Character", "HAPPENED", cardinality=ZeroOrMore, model=CharacterHistoryRel)
 
 
@@ -52,7 +52,8 @@ class Character(StructuredNode):
     alive = BooleanProperty(required=True)
 
     owner = RelationshipTo("User", "CREATED", cardinality=One)
-    based_on = RelationshipTo("Character", "BASED_ON", cardinality=One)
+    based_on = RelationshipTo("Character", "BASED_ON", cardinality=ZeroOrOne)
+    extended_by = RelationshipTo("Character", "EXTENDS", cardinality=ZeroOrMore)
     events = RelationshipTo("Campaign", "DID", cardinality=ZeroOrMore, model=CharacterHistoryRel)
 
 
@@ -71,7 +72,7 @@ class World(StructuredNode):
     name = StringProperty(unique_index=True)
     description = StringProperty(required=True)
 
-    creator = RelationshipTo("User", "CREATES", One)
+    creator = RelationshipTo("User", "CREATED", One)
     based_on = Relationship("World", "BASED_ON")
     settings = RelationshipTo("Setting", "HAS", cardinality=ZeroOrMore)
 
