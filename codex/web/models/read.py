@@ -9,7 +9,8 @@ __all__ = (
     "SettingRead",
     "CharacterRead",
     "CampaignRead",
-    "CharacterHistoryRead"
+    "CharacterHistoryRead",
+    "PlanetariumRead"
 )
 
 
@@ -49,3 +50,8 @@ class CampaignRead(edit.CampaignEdit):
 
 class CharacterHistoryRead(edit.CharacterHistoryEdit):
     pass
+
+
+class PlanetariumRead(base.Model):
+    version: str
+    type: str
