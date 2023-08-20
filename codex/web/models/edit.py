@@ -20,6 +20,7 @@ class UserEdit(base.ORMModel):
     """
 
     email: str
+    username: str
     password: str
 
 

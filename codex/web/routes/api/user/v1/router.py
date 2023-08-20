@@ -33,7 +33,8 @@ def user_create(*, data: UserEdit, current_user: User = Depends(get_current_user
     if not current_user.isAdmin:
         raise Denied
     return quick_create(
-        User(email=data.email, password=bcrypt.hashpw(bytes(data.password, encoding="utf-8"), bcrypt.gensalt())))
+        User(email=data.email, password=bcrypt.hashpw(bytes(data.password, encoding="utf-8"), bcrypt.gensalt()),
+             username=data.username))
 
 
 @router.put("/{user_id}",

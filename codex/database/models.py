@@ -18,6 +18,7 @@ class CharacterHistoryRel(StructuredRel):
 
 class User(StructuredNode):
     uid = UniqueIdProperty()
+    username = StringProperty(required=True)
     email = StringProperty(unique_index=True)
     password = StringProperty(required=True)
     isAdmin = BooleanProperty(default=False)

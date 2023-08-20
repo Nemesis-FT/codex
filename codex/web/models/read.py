@@ -19,6 +19,7 @@ class UserRead(base.ORMModel):
     """
     uid: str
     email: str
+    username: str
     isAdmin: bool
 
 
