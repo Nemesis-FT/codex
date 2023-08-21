@@ -29,6 +29,6 @@ log.info("Running codex application with Uvicorn...")
 if not User.nodes.all():
     quick_create(
         User(email="admin@admin.com", password=bcrypt.hashpw(bytes("password", encoding="utf-8"), bcrypt.gensalt()),
-             isAdmin=True)
+             isAdmin=True, username="admin")
     )
 uvicorn.run(app, port=int(os.environ["IS_WEB_PORT"]), host=os.environ["IS_WEB_HOST"])

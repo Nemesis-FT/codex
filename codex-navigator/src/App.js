@@ -14,11 +14,15 @@ function App() {
         onLoad();
     }, []);
 
+
     async function onLoad() {
         document.body.style.background = "#212529"
         document.body.style.color = "#fff"
         if (localStorage.getItem("address")) {
             setAddress(localStorage.getItem("address"))
+        }
+        if (sessionStorage.getItem("jwt")){
+            setToken(sessionStorage.getItem("jwt"))
         }
     }
 
