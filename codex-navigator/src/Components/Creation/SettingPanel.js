@@ -13,6 +13,7 @@ function SettingPanel() {
     const [description, setDescription] = useState("**What's happening in this setting?**");
     const [wlist, setWlist] = useState([])
     const [selWorld, setSelWorld] = useState(null)
+    const [timeframe, setTimeframe] = useState("")
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
@@ -23,7 +24,7 @@ function SettingPanel() {
 
     async function set_world(id) {
         wlist.forEach(elem => {
-            if(elem.uid === id){
+            if (elem.uid === id) {
                 setSelWorld(elem)
                 console.debug(elem)
             }
@@ -39,6 +40,22 @@ function SettingPanel() {
         });
         let data = await response.json()
         setWlist(data)
+    }
+
+    async function create_setting() {
+        const response = await fetch(window.location.protocol + "//" + address + "/api/setting/v1/" + selWorld.uid, {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': "application/json"
+            },
+            body: JSON.stringify({
+                timeframe: timeframe,
+                description: description
+            })
+        });
+        let data = await response.json()
     }
 
     return (
@@ -57,40 +74,45 @@ function SettingPanel() {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu as={CustomMenu}>
-                            {wlist.map(elem => <Dropdown.Item eventKey={elem.uid} key={elem.uid}>{elem.name}</Dropdown.Item>)}
+                            {wlist.map(elem => <Dropdown.Item eventKey={elem.uid}
+                                                              key={elem.uid}>{elem.name}</Dropdown.Item>)}
                         </Dropdown.Menu>
                     </Dropdown>
                     <p></p>
-                    {selWorld && <MDEditor.Markdown source={selWorld.description} style={{ whiteSpace: 'pre-wrap' }} />}
+                    {selWorld && <MDEditor.Markdown source={selWorld.description} style={{whiteSpace: 'pre-wrap'}}/>}
                 </Col>
 
             </Form.Group>
-            <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
-                <Form.Label column sm={2}>
-                    Time frame
-                </Form.Label>
-                <Col sm={10}>
-                    <Form.Control type="text" placeholder="When are these events happening?"/>
-                </Col>
-            </Form.Group>
+            {selWorld && <div>
+                <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
+                    <Form.Label column sm={2}>
+                        Time frame
+                    </Form.Label>
+                    <Col sm={10}>
+                        <Form.Control type="text" placeholder="When are these events happening?" value={timeframe}
+                                      onChange={event => {
+                                          setTimeframe(event.target.value)
+                                      }}/>
+                    </Col>
+                </Form.Group>
 
-            <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
-                <Form.Label column sm={2}>
-                    Description
-                </Form.Label>
-                <Col sm={10}>
-                    <MDEditor
-                        value={description}
-                        onChange={setDescription}
-                    />
-                </Col>
-            </Form.Group>
+                <Form.Group as={Row} className="mb-3" controlId="formHorizontalPassword">
+                    <Form.Label column sm={2}>
+                        Description
+                    </Form.Label>
+                    <Col sm={10}>
+                        <MDEditor
+                            value={description}
+                            onChange={setDescription}
+                        />
+                    </Col>
+                </Form.Group>
 
-            <Form.Group as={Row} className="mb-3">
-                <Col sm={{span: 10, offset: 2}}>
-                    <Button variant="light">Save this content</Button>
-                </Col>
-            </Form.Group>
+                <Form.Group as={Row} className="mb-3">
+                    <Col sm={{span: 10, offset: 2}}>
+                        <Button variant="light" onClick={create_setting}>Save this content</Button>
+                    </Col>
+                </Form.Group></div>}
         </Form>
     );
 }

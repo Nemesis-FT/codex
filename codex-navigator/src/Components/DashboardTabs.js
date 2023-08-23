@@ -11,7 +11,7 @@ function DashboardTabs() {
             id="controlled-tab-example"
             activeKey={key}
             onSelect={(k) => setKey(k)}
-            className="mb-3"
+            className="mb-3" fill
         >
             <Tab eventKey="search" title="Explore">
                 Tab content for Explore
