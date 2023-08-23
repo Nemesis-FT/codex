@@ -6,6 +6,9 @@ import Panel from "./Bricks/Panel";
 import Box from "./Bricks/Box";
 import Jumbotron from "./Bricks/Jumbotron";
 import ServerChooser from "./ServerChooser";
+import Col from "react-bootstrap/Col";
+import {Row} from "react-bootstrap";
+import DashboardTabs from "./DashboardTabs";
 
 export default function Home() {
     const {address, setAddress} = useAppContext()
@@ -15,18 +18,18 @@ export default function Home() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(!token){
+        if (!token) {
             navigate("/srv/login")
         }
         if (address === "") {
             navigate("/")
         }
-        if(!userData && address){
+        if (!userData && address) {
             getUserData()
         }
     }, [token, address])
 
-    async function getUserData(){
+    async function getUserData() {
         const response = await fetch(window.location.protocol + "//" + address + "/api/user/v1/me", {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -37,12 +40,13 @@ export default function Home() {
         console.debug(data)
     }
 
-    if(userData){
+    if (userData) {
         return (
             <div>
-                <Jumbotron title={"Welcome back, "+userData.user.username}>
-                    <p>This is your dashboard.</p>
+                <Jumbotron title={"Welcome back, " + userData.user.username}>
+
                 </Jumbotron>
+                <DashboardTabs/>
             </div>
 
         );

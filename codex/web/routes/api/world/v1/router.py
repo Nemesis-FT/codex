@@ -39,7 +39,7 @@ def world_create(*, data: WorldEdit, current_user=Depends(get_current_user)):
     world = quick_create(
         World(name=data.name, description=data.description))
     current_user.worlds.connect(world)
-    world.owner.connect(current_user)
+    world.creator.connect(current_user)
     return world
 
 

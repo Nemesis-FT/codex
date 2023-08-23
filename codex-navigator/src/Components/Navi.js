@@ -19,7 +19,6 @@ function Navi() {
     async function logout(){
         sessionStorage.removeItem("jwt")
         setToken(null)
-        setUserData(null)
     }
 
     return (
@@ -40,10 +39,10 @@ function Navi() {
                         </NavDropdown.Item>
                     </NavDropdown>
                     }
-                    {userData &&
+                    {token !== null && userData !== null &&
                         <NavDropdown title={<FontAwesomeIcon icon={faUser} />} id="basic-nav-dropdown">
                             <NavDropdown.Item disabled>
-                                Logged in as {userData.user.username}
+                                    Logged in as {userData.user.username}
                             </NavDropdown.Item>
                             <NavDropdown.Divider/>
                             <NavDropdown.Item onClick={event => logout()}>

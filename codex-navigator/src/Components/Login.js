@@ -13,7 +13,7 @@ export default function Login() {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [validated, setValidated] = useState(false);
+    const [validated, setValidated] = useState(true);
 
     const navigate = useNavigate()
 
@@ -64,7 +64,6 @@ export default function Login() {
             if (response.status === 200) {
                 let values = await response.json()
                 setToken(values.access_token)
-                console.debug(values.access_token)
                 setValidated(true)
                 sessionStorage.setItem("jwt", values.access_token)
             } else {
@@ -105,7 +104,7 @@ export default function Login() {
                     Please enter your credentials to access this instance.
                 </Alert>
                 <Form noValidate validated={validated}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-3">
                         <Form.Label>Email address</Form.Label>
                         <Form.Control type="email" placeholder="Enter email" value={email}
                                       onChange={event => setEmail(event.target.value)} required isInvalid={!validated}/>
@@ -114,7 +113,7 @@ export default function Login() {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="Password" value={password}
                                       onChange={event => setPassword(event.target.value)} required isInvalid={!validated}/>
