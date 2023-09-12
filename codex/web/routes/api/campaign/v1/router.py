@@ -1,6 +1,6 @@
 import fastapi.routing
 from fastapi import Depends
-from codex.database import Campaign, Character
+from codex.database import Campaign, Character, Setting
 from codex.web.authentication import get_current_user
 from codex.web.errors import Denied, ResourceNotFound
 from codex.web.crud import *
@@ -31,10 +31,10 @@ def campaign_get(*, campaign_id: str, current_user=Depends(get_current_user)):
     c = Campaign.nodes.get(uid=campaign_id)
     return CampaignFull(campaign=c, members=c.members.all(), dm=c.dm.all()[0], setting=c.setting.all(),
                         happenings=[CampaignHistory(character_history=
-                                                    CharacterHistoryRead(
-                                                        content=c.happenings.relationship(cha).content),
-                                                    character=cha)
-                                    for cha in c.happenings.all()])
+                        CharacterHistoryRead(
+                            content=c.happenings.relationship(cha).content),
+                            character=cha)
+                            for cha in c.happenings.all()])
 
 
 @router.post("/",
@@ -73,5 +73,21 @@ def campaign_add_character(*, campaign_id: str, char_id: str, data: CharacterHis
     r = character.events.connect(campaign, {"content": data.content})
     r.save()
     r = campaign.happenings.connect(character, {"content": data.content})
+    r.save()
+    return campaign
+
+
+@router.post("/{campaign_id}/char/{setting_id}", summary="Add a setting to a specific campaign", status_code=201,
+             response_model=CampaignRead)
+def campaign_add_setting(*, campaign_id: str, setting_id: str, current_user=Depends(get_current_user)):
+    campaign = Campaign.nodes.get(uid=campaign_id)
+    if not campaign.dm.is_connected(current_user):
+        raise Denied
+    setting = Setting.nodes.get(uid=setting_id)
+    if setting.campaigns.is_connected(campaign):
+        raise Denied
+    r = setting.campaigns.connect(campaign)
+    r.save()
+    r = campaign.setting.connect(campaign)
     r.save()
     return campaign

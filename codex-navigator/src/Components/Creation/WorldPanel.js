@@ -5,10 +5,14 @@ import Row from 'react-bootstrap/Row';
 import MDEditor from '@uiw/react-md-editor';
 import {useState} from "react";
 import {useAppContext} from "../../libs/Context";
+import {Alert} from "react-bootstrap";
 
 function WorldPanel() {
     const [description, setDescription] = useState("**What's so special about this world? Does it have major cities?**");
     const [name, setName] = useState("")
+    const [sent, setSent] = useState(false)
+    const [alertText, setAlertText] = useState("Data saved!")
+    const [alertVariant, setAlertVariant] = useState("light")
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
@@ -26,12 +30,25 @@ function WorldPanel() {
                 description: description
             })
         });
-        let data = await response.json()
+        setSent(true)
+        if(response.statusCode === 201){
+            let data = await response.json()
+            setAlertText("Data saved!")
+            setAlertVariant("light")
+            setTimeout(()=>{setSent(false)}, 1000)
+        }
+        else{
+            setAlertText("Something went wrong.")
+            setAlertVariant("danger")
+        }
+
 
     }
 
     return (
         <Form>
+            {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
+
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
                 <Form.Label column sm={2}>
                     World Name

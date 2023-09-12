@@ -1,0 +1,6 @@
+.Scrollable{
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 35rem;
+    padding-right: 10px;
+}

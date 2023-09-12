@@ -19,6 +19,9 @@ function DashboardTabs() {
             <Tab eventKey="create" title="Create">
                 <CreateTab/>
             </Tab>
+            <Tab eventKey="update" title="Update">
+                Tab content for Update
+            </Tab>
         </Tabs>
     );
 }

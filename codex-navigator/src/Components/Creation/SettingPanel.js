@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import MDEditor from '@uiw/react-md-editor';
 import {useEffect, useState} from "react";
-import {Dropdown} from "react-bootstrap";
+import {Alert, Dropdown} from "react-bootstrap";
 import {CustomMenu, CustomToggle} from "../Bricks/FilterDropdown";
 import {forEach} from "react-bootstrap/ElementChildren";
 import {useAppContext} from "../../libs/Context";
@@ -14,7 +14,9 @@ function SettingPanel() {
     const [wlist, setWlist] = useState([])
     const [selWorld, setSelWorld] = useState(null)
     const [timeframe, setTimeframe] = useState("")
-
+    const [sent, setSent] = useState(false)
+    const [alertText, setAlertText] = useState("Data saved!")
+    const [alertVariant, setAlertVariant] = useState("light")
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
@@ -55,11 +57,22 @@ function SettingPanel() {
                 description: description
             })
         });
-        let data = await response.json()
+        setSent(true)
+        if(response.statusCode === 201){
+            let data = await response.json()
+            setAlertText("Data saved!")
+            setAlertVariant("light")
+            setTimeout(()=>{setSent(false)}, 1000)
+        }
+        else{
+            setAlertText("Something went wrong.")
+            setAlertVariant("danger")
+        }
     }
 
     return (
         <Form>
+            {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
                 <Form.Label column sm={2}>
                     World
