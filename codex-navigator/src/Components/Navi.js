@@ -27,9 +27,9 @@ function Navi() {
                 <Navbar.Brand href="#home">Codex</Navbar.Brand>
                 <Navbar.Toggle/>
 
-                <Navbar.Collapse className="basic-navbar-nav">
+                <Navbar.Collapse className="justify-content-end">
                     {address &&
-                    <NavDropdown title={<FontAwesomeIcon icon={faNetworkWired} />} id="basic-nav-dropdown">
+                    <NavDropdown title={<FontAwesomeIcon icon={faNetworkWired}  />} id="basic-nav-dropdown" drop={"start"}>
                         <NavDropdown.Item disabled>
                             Connected to {address}
                         </NavDropdown.Item>
@@ -40,7 +40,7 @@ function Navi() {
                     </NavDropdown>
                     }
                     {token !== null && userData !== null &&
-                        <NavDropdown title={<FontAwesomeIcon icon={faUser} />} id="basic-nav-dropdown">
+                        <NavDropdown title={<FontAwesomeIcon icon={faUser} />} id="basic-nav-dropdown" drop={"start"}>
                             <NavDropdown.Item disabled>
                                     Logged in as {userData.user.username}
                             </NavDropdown.Item>

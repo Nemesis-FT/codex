@@ -2,6 +2,7 @@ import {useState} from 'react';
 import WorldPanel from "./WorldPanel";
 import SettingPanel from "./SettingPanel";
 import CampaignPanel from "./CampaignPanel";
+import CharacterPanel from "./CharacterPanel";
 
 
 function CreationRouter(props) {
@@ -18,6 +19,11 @@ function CreationRouter(props) {
     else if(props.mode === "Campaign"){
         return(
             <CampaignPanel/>
+        )
+    }
+    else if(props.mode === "Character"){
+        return(
+            <CharacterPanel/>
         )
     }
     else{

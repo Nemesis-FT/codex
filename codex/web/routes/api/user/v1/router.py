@@ -8,6 +8,7 @@ from codex.web.errors import Denied
 from codex.web.models.read import UserRead
 from codex.web.models.full import UserFull
 from codex.web.crud import *
+import typing as t
 
 router = fastapi.routing.APIRouter(
     prefix="/api/user/v1",
@@ -16,6 +17,10 @@ router = fastapi.routing.APIRouter(
     ],
 )
 
+
+@router.get("/", summary="Get data about users", status_code=200, response_model=t.List[UserRead])
+def users_get(*, current_user=Depends(get_current_user)):
+    return User.nodes.all()
 
 @router.get("/me",
             summary="Get data about currently logged in user",
