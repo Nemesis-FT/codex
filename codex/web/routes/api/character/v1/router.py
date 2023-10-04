@@ -1,11 +1,11 @@
 import fastapi.routing
 from fastapi import Depends
-from codex.database import Character
+from codex.database import Character, User
 from codex.web.authentication import get_current_user
 from codex.web.errors import Denied, ResourceNotFound
 from codex.web.crud import *
 from codex.web.models.read import CharacterRead
-from codex.web.models.edit import CharacterEdit
+from codex.web.models.edit import CharacterEdit, CharacterCreate
 from codex.web.models.full import CharacterFull
 import typing as t
 
@@ -35,15 +35,20 @@ def char_get(*, char_id: str, current_user=Depends(get_current_user)):
 @router.post("/",
              summary="Create a new character",
              status_code=201, response_model=CharacterRead)
-def char_create(*, data: CharacterEdit, current_user=Depends(get_current_user)):
+def char_create(*, data: CharacterCreate, current_user=Depends(get_current_user)):
     if data.based_on_id:
         if not Character.nodes.get(uid=data.based_on_id):
             raise ResourceNotFound
     char = quick_create(
         Character(name=data.name, race=data.race, levels=data.levels, backstory=data.backstory,
                   alive=data.alive))
-    current_user.characters.connect(char)
-    char.owner.connect(current_user)
+    if data.owner_override == "":
+        current_user.characters.connect(char)
+        char.owner.connect(current_user)
+    else:
+        user = User.nodes.get(uid=data.owner_override)
+        user.characters.connect(char)
+        char.owner.connect(user)
     if data.based_on_id:
         base = Character.nodes.get(uid=data.based_on_id)
         char.based_on.connect(base)

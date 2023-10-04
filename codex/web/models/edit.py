@@ -9,6 +9,7 @@ __all__ = (
     "WorldEdit",
     "SettingEdit",
     "CharacterEdit",
+    "CharacterCreate",
     "CampaignEdit",
     "CharacterHistoryEdit"
 )
@@ -41,6 +42,10 @@ class CharacterEdit(base.ORMModel):
     backstory: t.Optional[str]
     alive: bool
     based_on_id: t.Optional[str]
+
+
+class CharacterCreate(CharacterEdit):
+    owner_override: t.Optional[str]
 
 
 class CampaignEdit(base.ORMModel):

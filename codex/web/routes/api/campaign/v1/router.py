@@ -1,6 +1,6 @@
 import fastapi.routing
 from fastapi import Depends
-from codex.database import Campaign, Character, Setting
+from codex.database import Campaign, Character, Setting, User
 from codex.web.authentication import get_current_user
 from codex.web.errors import Denied, ResourceNotFound
 from codex.web.crud import *
@@ -60,7 +60,7 @@ def campaign_edit(*, campaign_id: str, data: CampaignEdit, current_user=Depends(
     return quick_update(campaign, data)
 
 
-@router.post("/{campaign_id}/char/{char_id}", summary="Add a character to a specific campaign",
+@router.post("/{campaign_id}/character/{char_id}", summary="Add a character to a specific campaign",
              status_code=200, response_model=CampaignRead)
 def campaign_add_character(*, campaign_id: str, char_id: str, data: CharacterHistoryEdit,
                            current_user=Depends(get_current_user)):
@@ -77,7 +77,7 @@ def campaign_add_character(*, campaign_id: str, char_id: str, data: CharacterHis
     return campaign
 
 
-@router.post("/{campaign_id}/char/{setting_id}", summary="Add a setting to a specific campaign", status_code=201,
+@router.post("/{campaign_id}/setting/{setting_id}", summary="Add a setting to a specific campaign", status_code=201,
              response_model=CampaignRead)
 def campaign_add_setting(*, campaign_id: str, setting_id: str, current_user=Depends(get_current_user)):
     campaign = Campaign.nodes.get(uid=campaign_id)
@@ -86,8 +86,26 @@ def campaign_add_setting(*, campaign_id: str, setting_id: str, current_user=Depe
     setting = Setting.nodes.get(uid=setting_id)
     if setting.campaigns.is_connected(campaign):
         raise Denied
-    r = setting.campaigns.connect(campaign)
+    setting.campaigns.connect(campaign)
+    campaign.setting.connect(setting)
+    return campaign
+
+
+@router.post("/{campaign_id}/user/{user_id}/{character_id}", summary="Add a user to a specific campaign",
+             status_code=201,
+             response_model=CampaignRead)
+def campaign_add_user(*, campaign_id: str, user_id: str, character_id: str, current_user=Depends(get_current_user)):
+    campaign = Campaign.nodes.get(uid=campaign_id)
+    if not campaign.dm.is_connected(current_user):
+        raise Denied
+    user = User.nodes.get(uid=user_id)
+    if user.partecipations.is_connected(campaign):
+        return campaign
+    character = Character.nodes.get(uid=character_id)
+    if not character.owner.is_connected(user):
+        raise Denied
+    r = user.partecipations.connect(campaign, {"character": character_id})
     r.save()
-    r = campaign.setting.connect(campaign)
+    r = campaign.members.connect(user, {"character": character_id})
     r.save()
     return campaign

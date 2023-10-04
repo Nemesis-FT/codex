@@ -6,10 +6,10 @@ import MDEditor from '@uiw/react-md-editor';
 import {useEffect, useState} from "react";
 import {useAppContext} from "../../libs/Context";
 import {Accordion, Alert} from "react-bootstrap";
-import Panel from "../Bricks/Panel";
-import Picker from "../Bricks/Picker";
+import Panel from "./Panel";
+import Picker from "./Picker";
 import MultiverseExplorer from "./MultiverseExplorer";
-import Style from "./multiverseExplorer.module.css"
+import Style from "./MultiverseExplorer.module.css"
 
 function CharacterPanel(props) {
     const [rootCharList, setRootCharList] = useState([])

@@ -15,6 +15,7 @@ export default function ListBuilder(props) {
     const [selection, setSelection] = useState(null)
 
     async function add() {
+
         if (props.selectedList.includes(selection)) {
             return
         }
@@ -23,27 +24,31 @@ export default function ListBuilder(props) {
 
     async function remove(item) {
         if (props.selectedList.includes(selection)) {
-            props.setSelectedList(props.selectedList.filter((elem) => elem!==item))
+            props.setSelectedList(props.selectedList.filter((elem) => elem !== item))
         }
     }
 
-    return(
+    return (
         <Row>
             <Col>
                 <Row>
                     <Col>
-                        <Picker list={props.source_list} value={selection} setValue={setSelection} representer={props.representer}
+                        <Picker list={props.source_list} value={selection} setValue={setSelection}
+                                representer={props.representer}
                                 onover_field={props.onover_field}/>
                     </Col>
                     <Col>
-                        <Button variant="light" onClick={add}>Add</Button>
+                        {selection &&
+                            <Button variant="light" onClick={add}>Add</Button>
+                        }
                     </Col>
                 </Row>
             </Col>
             <Col>
                 <ListGroup>
                     {props.selectedList.map(elem =>
-                        <ListGroup.Item key={elem.uid}>{elem[props.representer]} <a href="#" onClick={() => remove(elem)}>Remove</a>
+                        <ListGroup.Item key={elem.uid}>{elem[props.representer]} <a href="#"
+                                                                                    onClick={() => remove(elem)}>Remove</a>
                         </ListGroup.Item>
                     )}
                 </ListGroup>

@@ -9,7 +9,7 @@ __all__ = (
 
 
 class PartecipationRel(StructuredRel):
-    character = RelationshipTo("Character", "IN", cardinality=OneOrMore)
+    character = StringProperty(required=True)
 
 
 class CharacterHistoryRel(StructuredRel):

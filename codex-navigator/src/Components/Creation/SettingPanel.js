@@ -58,7 +58,7 @@ function SettingPanel() {
             })
         });
         setSent(true)
-        if(response.statusCode === 201){
+        if(response.status === 201 || response.status === 200){
             let data = await response.json()
             setAlertText("Data saved!")
             setAlertVariant("light")

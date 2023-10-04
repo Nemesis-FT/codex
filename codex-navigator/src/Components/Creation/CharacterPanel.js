@@ -3,11 +3,13 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import MDEditor from '@uiw/react-md-editor';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppContext} from "../../libs/Context";
 import {Accordion, Alert} from "react-bootstrap";
 import Panel from "../Bricks/Panel";
-import MultiverseExplorer from "./MultiverseExplorer";
+import MultiverseExplorer from "../Bricks/MultiverseExplorer";
+import Picker from "../Bricks/Picker";
+import Style from "./CampaignPanel.module.css"
 
 function CharacterPanel() {
     const [backstory, setBackstory] = useState("**What's this character's backstory?**");
@@ -17,6 +19,9 @@ function CharacterPanel() {
     const [alive, setAlive] = useState(true)
     const [baseChar, setBaseChar] = useState(null)
 
+    const [users, setUsers] = useState([])
+    const [owner, setOwner] = useState(null)
+
     const [sent, setSent] = useState(false)
     const [alertText, setAlertText] = useState("Data saved!")
     const [alertVariant, setAlertVariant] = useState("light")
@@ -24,8 +29,31 @@ function CharacterPanel() {
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
+    useEffect(() => {
+        get_users()
+    }, [])
+
+    async function get_users() {
+        const response = await fetch(window.location.protocol + "//" + address + "/api/user/v1/", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        let data = await response.json()
+        setUsers(data)
+        console.debug(data)
+    }
+
     async function create_character() {
-        const response = await fetch(window.location.protocol + "//" + address + "/api/world/v1/", {
+        let b_id = ""
+        let o_over = ""
+        if(baseChar){
+            b_id = baseChar.uid
+        }
+        if(owner){
+            o_over = owner.uid
+        }
+        const response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/", {
             method: "POST",
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -34,11 +62,16 @@ function CharacterPanel() {
             },
             body: JSON.stringify({
                 name: name,
-                description: backstory
+                race: race,
+                levels: levels,
+                backstory: backstory,
+                alive: alive,
+                based_on_id: b_id,
+                owner_override: o_over
             })
         });
         setSent(true)
-        if (response.statusCode === 201) {
+        if (response.status === 201 || response.status === 200) {
             let data = await response.json()
             setAlertText("Data saved!")
             setAlertVariant("light")
@@ -54,7 +87,7 @@ function CharacterPanel() {
     }
 
     return (
-        <div>
+        <div className={Style.Scrollable}>
             <h4>Basic information</h4>
             <Form>
                 {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
@@ -97,7 +130,7 @@ function CharacterPanel() {
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={2}>
-                        Is he alive?
+                        Is it still alive?
                     </Form.Label>
                     <Col sm={10}>
                         <Form.Check type="checkbox" checked={alive} onChange={event => {
@@ -110,20 +143,25 @@ function CharacterPanel() {
             </Form>
             <Panel>
                 <h4>Additional information</h4>
-                <p>If this character is a variation or an evolution of another character, please expand and compile the following section.</p>
+                <p>If this character is a variation or an evolution of another character, please expand and compile the
+                    following section.</p>
                 <Accordion>
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>Multiverse Explorer</Accordion.Header>
                         <Accordion.Body>
                             <MultiverseExplorer savefun={setBaseChar}/>
-                            { baseChar &&
-                            <Panel>You have chosen {baseChar.name} as your base character for this one.</Panel> }
+                            {baseChar &&
+                            <Panel>You have chosen {baseChar.name} as your base character for this one.
+                                <a href="#" onClick={event => {
+                                    setBaseChar(null)
+                                }}>Click here to undo this choice.</a></Panel>}
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
 
                 <br/>
-                <p>If this character is a variation or an evolution of another character, just add new backstory elements.</p>
+                <p>If this character is a variation or an evolution of another character, just add new backstory
+                    elements.</p>
                 <Form>
                     <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={2}>
@@ -137,12 +175,19 @@ function CharacterPanel() {
                         </Col>
                     </Form.Group>
                 </Form>
+
+                <p>If you're creating this character for another user, you can override ownership here. If not, leave
+                    things as they are.</p>
+                <Picker list={users} value={owner} setValue={setOwner} representer={"username"} onover_field={"email"}/>
+                {owner && <Panel>
+                    You have chosen {owner.username} as the owner.
+                    <a href="#" onClick={event => {
+                        setOwner(null)
+                    }}>Click here to undo this choice.</a>
+                </Panel>}
+
             </Panel>
-            <Form.Group as={Row} className="mb-3">
-                <Col sm={{span: 10, offset: 2}}>
-                    <Button variant="light" onClick={create_character}>Save this content</Button>
-                </Col>
-            </Form.Group>
+            <Button variant="light" onClick={create_character}>Save this content</Button>
         </div>
     );
 }
