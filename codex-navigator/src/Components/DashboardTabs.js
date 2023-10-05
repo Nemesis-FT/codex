@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import CreateTab from "./Creation/Creation";
+import ExplorePanel from "./Explorer/ExplorePanel";
 
 function DashboardTabs() {
     const [key, setKey] = useState('search');
@@ -14,7 +15,7 @@ function DashboardTabs() {
             className="mb-3" fill
         >
             <Tab eventKey="search" title="Explore">
-                Tab content for Explore
+                <ExplorePanel/>
             </Tab>
             <Tab eventKey="create" title="Create">
                 <CreateTab/>
