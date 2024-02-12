@@ -4,9 +4,9 @@ from codex.database import Character, User
 from codex.web.authentication import get_current_user
 from codex.web.errors import Denied, ResourceNotFound
 from codex.web.crud import *
-from codex.web.models.read import CharacterRead
+from codex.web.models.read import CharacterRead, CharacterHistoryRead
 from codex.web.models.edit import CharacterEdit, CharacterCreate
-from codex.web.models.full import CharacterFull
+from codex.web.models.full import CharacterFull, CharacterHistoryFull
 import typing as t
 
 router = fastapi.routing.APIRouter(
@@ -29,7 +29,13 @@ def chars_get(*, current_user=Depends(get_current_user)):
             status_code=200, response_model=CharacterFull)
 def char_get(*, char_id: str, current_user=Depends(get_current_user)):
     c = Character.nodes.get(uid=char_id)
-    return CharacterFull(character=c, based_on=c.based_on.all(), extended_by=c.extended_by.all(), owner=c.owner.all()[0])
+    return CharacterFull(character=c, based_on=c.based_on.all(), extended_by=c.extended_by.all(),
+                         owner=c.owner.all()[0],
+                         happenings=[CharacterHistoryFull(character_history=
+                                                          CharacterHistoryRead(
+                                                              content=c.events.relationship(campaign).content,
+                                                              campaign=campaign), campaign = campaign)
+                                     for campaign in c.events.all()])
 
 
 @router.post("/",

@@ -5,10 +5,16 @@ from codex.web.models.base import Model
 from codex.web.models.read import CharacterRead, UserRead, WorldRead, SettingRead, CampaignRead, CharacterHistoryRead
 
 
+class CharacterHistoryFull(Model):
+    character_history: CharacterHistoryRead
+    campaign: CampaignRead
+
+
 class CharacterFull(Model):
     character: CharacterRead
     based_on: t.List[CharacterRead]
     extended_by: t.List[CharacterRead]
+    happenings: t.List[CharacterHistoryFull]
     owner: UserRead
 
 
@@ -45,11 +51,3 @@ class CampaignFull(Model):
     dm: UserRead
     setting: t.List[SettingRead]
     happenings: t.List[CampaignHistory]
-
-
-class CharacterHistoryFull(Model):
-    character_history: CharacterHistoryRead
-    campaign: CampaignRead
-
-
-

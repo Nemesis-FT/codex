@@ -6,9 +6,11 @@ import {levenshteinEditDistance} from "levenshtein-edit-distance";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import {useAppContext} from "../../libs/Context";
-import {queries} from "@testing-library/react";
+import Style from "./SearchPanel.module.css"
+import SearchResult from "./SearchResult";
+import ListGroup from "react-bootstrap/ListGroup";
 
-function ExplorePanel() {
+function SearchPanel(props) {
 
     const [query, setQuery] = useState("")
     const [results, setResults] = useState([])
@@ -18,11 +20,12 @@ function ExplorePanel() {
 
 
     class QueryResult {
-        constructor(representer, summary, uid, type) {
+        constructor(representer, summary, uid, type, data) {
             this.representer = representer
             this.summary = summary
             this.uid = uid
             this.type = type
+            this.data = data
         }
     }
 
@@ -39,13 +42,13 @@ function ExplorePanel() {
             for (const element of data) {
                 switch (key) {
                     case "world":
-                        result.push(new QueryResult(element.name, element.description, element.uid, key))
+                        result.push(new QueryResult(element.name, element.description, element.uid, key, element))
                         break;
                     case "character":
-                        result.push(new QueryResult(element.name, element.backstory, element.uid, key))
+                        result.push(new QueryResult(element.name, element.backstory, element.uid, key, element))
                         break;
                     case "campaign":
-                        result.push(new QueryResult(element.name, element.synopsis, element.uid, key))
+                        result.push(new QueryResult(element.name, element.synopsis, element.uid, key, element))
                         break;
                 }
             }
@@ -72,6 +75,7 @@ function ExplorePanel() {
             return 0
         })
         console.debug(result)
+        setResults(result)
     }
 
     return (
@@ -94,8 +98,18 @@ function ExplorePanel() {
                     </Col>
                 </Row>
             </Form>
+            {results.length>0 &&
+            <Panel>
+                <div className={Style.Scrollable}>
+                <h5>Here are your results:</h5>
+                <ListGroup>
+                    {results.map(elem => <SearchResult id={elem.uid} item={elem.item} setMode={props.setMode} setTarget={props.setTarget} key={elem.uid}/>)}
+                </ListGroup>
+                </div>
+            </Panel>
+            }
         </div>
     );
 }
 
-export default ExplorePanel;
+export default SearchPanel;
