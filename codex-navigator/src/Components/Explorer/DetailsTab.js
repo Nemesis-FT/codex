@@ -12,11 +12,13 @@ import ListGroup from "react-bootstrap/ListGroup";
 import SearchPanel from "./SearchPanel";
 import {AppContext} from "../../libs/Context"
 import CharacterDetails from "./Specialization/CharacterDetails";
+import CampaignDetails from "./Specialization/CampaignDetails";
 
 function DetailsTab(props) {
 
     const [data, setData] = useState(null)
     const [done, setDone] = useState(false)
+    const [parent, setParent] = useState(props.parent)
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
@@ -33,6 +35,7 @@ function DetailsTab(props) {
             },
         });
         let d = await response.json();
+        d.type = target.type
         setData(d)
         console.debug(d)
     }
@@ -44,14 +47,13 @@ function DetailsTab(props) {
         );
     }
     else{
-        switch(props.item.type){
-            case "world":
-                break;
-            case "character":
-                return <CharacterDetails target={data}/>
-            case "campaign":
-                break;
-        }
+        return (
+            <div>
+                {parent !== undefined  && <Button variant="light" onClick={event=>{setData(parent); setParent(undefined)}}>Go back</Button>}
+                {data.type === "character" && <CharacterDetails target={data}/>}
+                {data.type === "campaign" && <CampaignDetails target={data}/>}
+            </div>
+        )
     }
 }
 

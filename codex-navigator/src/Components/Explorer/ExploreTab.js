@@ -13,7 +13,7 @@ import SearchPanel from "./SearchPanel";
 import {AppContext} from "../../libs/Context"
 import DetailsTab from "./DetailsTab";
 
-function ExploreTab() {
+function ExploreTab(props) {
 
     const [mode, setMode] = useState("search")
     const [target, setTarget] = useState(null)
@@ -21,11 +21,12 @@ function ExploreTab() {
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
+
     return (
             <div>
                 {mode === "search" && <SearchPanel mode={mode} setMode={setMode} target={target} setTarget={setTarget}/>}
                 {mode === "detail" && <div>
-                    <Button variant="light"onClick={e => {setMode("search")}}>Go back</Button>
+                    <Button variant="light"onClick={e => { setMode("search")}}>Back to search</Button>
                     <DetailsTab item={target}/>
                 </div>}
             </div>
