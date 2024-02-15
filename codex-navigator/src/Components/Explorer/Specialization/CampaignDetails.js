@@ -11,6 +11,8 @@ import MDEditor from "@uiw/react-md-editor";
 import DetailsTab from "../DetailsTab";
 import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 function CampaignDetails(props) {
 
@@ -68,12 +70,12 @@ function CampaignDetails(props) {
                                                 <MDEditor.Markdown source={elem.character_history.content}
                                                                    style={mdestyle}/>
                                             </Col>
-                                            <Col xs={3} onClick={event => {
-                                                setExt(elem.character);
-                                                console.debug(elem.character);
-                                                setMode("character")
-                                            }}>
-                                                Character: {elem.character.name}
+                                            <Col xs={1} >
+                                                <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                                    setExt(elem.character);
+                                                    console.debug(elem.character);
+                                                    setMode("character")
+                                                }}/>
                                             </Col>
                                         </Row>
                                     </Panel>
@@ -96,12 +98,12 @@ function CampaignDetails(props) {
                                                 <MDEditor.Markdown source={elem.description}
                                                                    style={mdestyle}/>
                                             </Col>
-                                            <Col xs={1} onClick={event => {
-                                                setExt(elem);
-                                                console.debug(elem);
-                                                setMode("setting")
-                                            }}>
-                                                Details
+                                            <Col xs={1} >
+                                                <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                                    setExt(elem);
+                                                    console.debug(elem);
+                                                    setMode("setting")
+                                                }}/>
                                             </Col>
                                         </Row>
                                     </Panel>
@@ -114,7 +116,7 @@ function CampaignDetails(props) {
 
         );
     } else if (mode === "character") {
-        return <DetailsTab item={{type: mode, data: ext, uid: ext.uid, representer: ext.name}} parent={props.target}/>
+        return <DetailsTab item={{type: mode, data: ext, uid: ext.uid, representer: ext.name}} parent={props.target} />
     }
     else if (mode==="setting"){
         return <DetailsTab item={{type: mode, data: ext, uid: ext.uid, representer: ext.timeframe}} parent={props.target}/>

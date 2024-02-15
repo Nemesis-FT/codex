@@ -46,6 +46,7 @@ function WorldPanel() {
     }
 
     return (
+        // TODO: Aggiungi la possibilità di scegliere un mondo padre
         <Form>
             {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
 

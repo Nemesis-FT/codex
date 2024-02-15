@@ -11,6 +11,8 @@ import MDEditor from "@uiw/react-md-editor";
 import DetailsTab from "../DetailsTab";
 import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function WorldDetails(props) {
 
@@ -19,11 +21,30 @@ function WorldDetails(props) {
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
     const [ext, setExt] = useState(null)
+    const [parent, setParent] = useState(null);
+    const [settings, setSettings] = useState([])
+
+    useEffect(e =>{
+        const tmp = props.target.settings.sort(compare)
+        setSettings(tmp)
+    }, [props.target])
+
+    function compare(a, b){
+        return parseInt(a.timeframe) > parseInt(b.timeframe)
+    }
+
+
     if (mode === "world") {
         return (
             <div>
-                {props.target.world.based_on === null && <Button variant={"light"}>
-                    Based on: {props.target.world.based_on.name} </Button>
+                {parent !== null &&
+                    <div>
+                        <DetailsTab item={parent}/>
+                        <Button variant="light" className={Style.MargButton} onClick={e => {
+                            setParent(null)
+                        }}>
+                            Clear</Button>
+                    </div>
                 }
                 <h3>World details</h3>
                 <Panel>
@@ -42,12 +63,12 @@ function WorldDetails(props) {
                     <h5>Description</h5>
                     <MDEditor.Markdown source={props.target.world.description} style={mdestyle}/>
                 </Panel>
-                {props.target.settings.length !== 0 && <div className={Style.Spacing}>
+                {settings.length !== 0 && <div className={Style.Spacing}>
                     <Accordion>
                         <Accordion.Item eventKey={props.target.world.uid}>
                             <Accordion.Header>Events</Accordion.Header>
                             <Accordion.Body>
-                                {props.target.settings.map(elem =>
+                                {settings.map(elem =>
                                     <Panel key={elem.uid}>
                                         <Row>
                                             <Col xs={1}>
@@ -57,11 +78,11 @@ function WorldDetails(props) {
                                                 <MDEditor.Markdown source={elem.description}
                                                                    style={mdestyle}/>
                                             </Col>
-                                            <Col xs={1} onClick={event => {
-                                                setExt(elem);
-                                                setMode("setting")
-                                            }}>
-                                                Learn more
+                                            <Col xs={1} >
+                                                <FontAwesomeIcon onClick={event => {
+                                                    setExt(elem);
+                                                    setMode("setting")
+                                                }} icon={faSearch} />
                                             </Col>
                                         </Row>
                                     </Panel>
@@ -70,6 +91,11 @@ function WorldDetails(props) {
                         </Accordion.Item>
                     </Accordion>
                 </div>}
+                {props.target.world.based_on === null &&
+                    <Button variant={"light"} onClick={setParent({type: "world",
+                        data: props.target.world.based_on, uid: props.target.world.uid})}>
+                    Based on: {props.target.world.based_on.name} </Button>
+                }
             </div>
         );
     } else if (mode === "setting") {

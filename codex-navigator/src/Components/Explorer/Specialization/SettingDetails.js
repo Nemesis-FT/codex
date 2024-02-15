@@ -11,6 +11,8 @@ import MDEditor from "@uiw/react-md-editor";
 import DetailsTab from "../DetailsTab";
 import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function SettingDetails(props) {
 
@@ -30,8 +32,8 @@ function SettingDetails(props) {
                             Timeframe: {props.target.setting.timeframe}
                         </ListGroup.Item>
                         <ListGroup.Item key="world">
-                            World: {props.target.world.name} <a href={"#"} onClick={event => {setExt(props.target.world);
-                            setMode("world")}}>Go to</a>
+                            World: {props.target.world.name} <FontAwesomeIcon icon={faSearch} onClick={event => {setExt(props.target.world);
+                            setMode("world")}}/>
                         </ListGroup.Item>
                         <ListGroup.Item key="owner">
                             Owner: {props.target.owner.username}
@@ -62,7 +64,10 @@ function SettingDetails(props) {
                                                 setExt(elem);
                                                 setMode("campaign")
                                             }}>
-                                                Learn more
+                                                <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                                    setExt(elem);
+                                                    setMode("campaign")
+                                                }}/>
                                             </Col>
                                         </Row>
                                     </Panel>

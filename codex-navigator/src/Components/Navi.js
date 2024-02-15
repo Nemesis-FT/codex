@@ -24,7 +24,7 @@ function Navi() {
     return (
         <Navbar className="bg-body-tertiary" data-bs-theme="dark">
             <Container>
-                <Navbar.Brand href="#home">Codex</Navbar.Brand>
+                <Navbar.Brand>Codex</Navbar.Brand>
                 <Navbar.Toggle/>
 
                 <Navbar.Collapse className="justify-content-end">

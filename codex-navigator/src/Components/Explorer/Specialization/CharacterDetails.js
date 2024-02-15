@@ -11,6 +11,8 @@ import MDEditor from "@uiw/react-md-editor";
 import DetailsTab from "../DetailsTab";
 import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function CharacterDetails(props) {
 
@@ -60,11 +62,10 @@ function CharacterDetails(props) {
                                                 <MDEditor.Markdown source={elem.character_history.content}
                                                                    style={mdestyle}/>
                                             </Col>
-                                            <Col xs={1} onClick={event => {
-                                                setExt(elem.campaign);
-                                                setMode("campaign")
-                                            }}>
-                                                Learn more
+                                            <Col xs={1}>
+                                                <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                                    setExt(elem.campaign);
+                                                    setMode("campaign")}}/>
                                             </Col>
                                         </Row>
                                     </Panel>

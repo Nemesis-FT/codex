@@ -13,10 +13,10 @@ export default function SearchResult(props){
     return (
         <ListGroupItem onClick={event => {event.preventDefault(); props.setTarget(props.item); props.setMode("detail")}}>
             <Row>
-                <Col xs={10}>
+                <Col>
                     {props.item.representer}
                 </Col>
-                <Col xs={2}>
+                <Col>
                     Type: {props.item.type}
                 </Col>
             </Row>
