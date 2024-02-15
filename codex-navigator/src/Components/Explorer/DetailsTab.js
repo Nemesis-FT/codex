@@ -13,6 +13,8 @@ import SearchPanel from "./SearchPanel";
 import {AppContext} from "../../libs/Context"
 import CharacterDetails from "./Specialization/CharacterDetails";
 import CampaignDetails from "./Specialization/CampaignDetails";
+import SettingDetails from "./Specialization/SettingDetails";
+import WorldDetails from "./Specialization/WorldDetails";
 
 function DetailsTab(props) {
 
@@ -23,35 +25,42 @@ function DetailsTab(props) {
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
-    useEffect(()=>{
+    useEffect(() => {
         gather_more(props.item).then(r => setDone(true))
     }, [props.item])
 
-    async function gather_more(target){
+    async function gather_more(target) {
         console.debug(target)
-        const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/"+target.uid, {
+        const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
         });
         let d = await response.json();
         d.type = target.type
+        d.representer = target.representer
+
         setData(d)
         console.debug(d)
     }
-    if(!done){
+
+    if (!done) {
         return (
             <div>
                 <p>Please wait, now loading...</p>
             </div>
         );
-    }
-    else{
+    } else {
         return (
             <div>
-                {parent !== undefined  && <Button variant="light" onClick={event=>{setData(parent); setParent(undefined)}}>Go back</Button>}
+                {parent !== undefined && <Button variant="light" onClick={event => {
+                    setData(parent);
+                    setParent(undefined)
+                }}>Go back to {parent.representer}</Button>}
                 {data.type === "character" && <CharacterDetails target={data}/>}
                 {data.type === "campaign" && <CampaignDetails target={data}/>}
+                {data.type === "setting" && <SettingDetails target={data}/>}
+                {data.type === "world" && <WorldDetails target={data}/>}
             </div>
         )
     }

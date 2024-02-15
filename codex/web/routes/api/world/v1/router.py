@@ -29,7 +29,11 @@ def worlds_get(*, current_user=Depends(get_current_user)):
             status_code=200, response_model=WorldFull)
 def world_get(*, world_id: str, current_user=Depends(get_current_user)):
     w = World.nodes.get(uid=world_id)
-    return WorldFull(world=w, creator=w.creator.all()[0], based_on=w.based_on.all()[0], settings=w.settings.all())
+    based_on = None
+    tmp = w.based_on.all()
+    if len(tmp) > 0:
+        based_on = tmp[0]
+    return WorldFull(world=w, creator=w.creator.all()[0], based_on=based_on, settings=w.settings.all())
 
 
 @router.post("/",

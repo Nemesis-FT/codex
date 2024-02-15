@@ -36,7 +36,7 @@ class SettingFull(Model):
 class WorldFull(Model):
     world: WorldRead
     creator: UserRead
-    based_on: WorldRead
+    based_on: t.Optional[WorldRead]
     settings: t.List[SettingRead]
 
 
