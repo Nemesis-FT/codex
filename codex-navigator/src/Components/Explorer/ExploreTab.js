@@ -17,7 +17,6 @@ function ExploreTab(props) {
 
     const [mode, setMode] = useState("search")
     const [target, setTarget] = useState(null)
-    const [breadCrumbs, setBreadCrumbs] = useState([])
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
@@ -27,8 +26,7 @@ function ExploreTab(props) {
             <div>
                 {mode === "search" && <SearchPanel mode={mode} setMode={setMode} target={target} setTarget={setTarget}/>}
                 {mode === "detail" && <div>
-                    <Button variant="light" onClick={e => { setMode("search")}}>Back to search</Button>
-                    <DetailsTab item={target} setBreadCrumbs={setBreadCrumbs} breadCrumbs = {breadCrumbs}/>
+                    <DetailsTab item={target} setMode={setMode}/>
                 </div>}
             </div>
 

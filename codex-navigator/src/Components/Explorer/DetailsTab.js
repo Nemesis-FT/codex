@@ -1,11 +1,11 @@
 import {useEffect, useState} from 'react';
 import Panel from "../Bricks/Panel";
-import {Dropdown, Row} from "react-bootstrap";
+import {Breadcrumb, Dropdown, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import {levenshteinEditDistance} from "levenshtein-edit-distance";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {useAppContext} from "../../libs/Context";
+import {BreadContext, useAppContext} from "../../libs/Context";
 import Style from "./SearchPanel.module.css"
 import SearchResult from "./SearchResult";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -16,21 +16,39 @@ import CampaignDetails from "./Specialization/CampaignDetails";
 import SettingDetails from "./Specialization/SettingDetails";
 import WorldDetails from "./Specialization/WorldDetails";
 
+import {useBreadContext} from "../../libs/Context";
+
+export class Bread {
+    constructor(representer, uid, type, data, next_data) {
+        this.representer = representer
+        this.uid = uid
+        this.type = type
+        this.data = data
+        this.next_data = next_data
+    }
+}
+
 function DetailsTab(props) {
 
     const [data, setData] = useState(null)
     const [done, setDone] = useState(false)
     const [parent, setParent] = useState(props.parent)
+    const [bread, setBread] = useState([])
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
     useEffect(() => {
-        gather_more(props.item).then(r => setDone(true))
-    }, [props.item])
+        setDone(false)
+        if (bread.length === 0) {
+            gather_more(props.item).then(r => setDone(true))
+        } else {
+            gather_more(bread[bread.length - 1].next_data).then(r => setDone(true))
+        }
+
+    }, [bread])
 
     async function gather_more(target) {
-        console.debug(target)
         const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -41,29 +59,44 @@ function DetailsTab(props) {
         d.representer = target.representer
 
         setData(d)
-        console.debug(d)
     }
 
-    if (!done) {
-        return (
-            <div>
-                <p>Please wait, now loading...</p>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                {parent !== undefined && <Button variant="light" onClick={event => {
-                    setData(parent);
-                    setParent(undefined)
-                }}>Go back to {parent.representer}</Button>}
-                {data.type === "character" && <CharacterDetails target={data}/>}
-                {data.type === "campaign" && <CampaignDetails target={data}/>}
-                {data.type === "setting" && <SettingDetails target={data}/>}
-                {data.type === "world" && <WorldDetails target={data}/>}
-            </div>
-        )
-    }
+    return (
+        <div>
+            <BreadContext.Provider value={{setBread, bread, data, setData}}>
+                <Breadcrumb>
+                    <Breadcrumb.Item href="#" onClick={e => {
+                        props.setMode("search")
+                    }}>
+                        Search
+                    </Breadcrumb.Item>
+                    {bread.map(elem => {
+                        return <Breadcrumb.Item href="#" key={elem.uid} onClick={e => {
+                            let tmp = bread
+                            if (tmp.indexOf(elem) > 0) {
+                                setDone(false)
+                                tmp.length = tmp.indexOf(elem)
+                                setBread(tmp)
+                                gather_more(elem).then(e => {
+                                    setDone(true)
+                                })
+                            } else {
+                                setBread([])
+                            }
+                        }
+                        }>{elem.representer}</Breadcrumb.Item>
+                    })}
+                </Breadcrumb>
+                {done === true && <>
+                    {data.type === "character" && <CharacterDetails target={data}/>}
+                    {data.type === "campaign" && <CampaignDetails target={data}/>}
+                    {data.type === "setting" && <SettingDetails target={data}/>}
+                    {data.type === "world" && <WorldDetails target={data}/>}
+                </>}
+                {done === false && <p>Please wait, now loading...</p>}
+            </BreadContext.Provider>
+        </div>)
+
 }
 
 export default DetailsTab;

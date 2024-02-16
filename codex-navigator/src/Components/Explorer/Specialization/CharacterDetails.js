@@ -5,10 +5,10 @@ import Col from "react-bootstrap/Col";
 import {levenshteinEditDistance} from "levenshtein-edit-distance";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import {useAppContext} from "../../../libs/Context";
+import {useAppContext, useBreadContext} from "../../../libs/Context";
 import ListGroup from "react-bootstrap/ListGroup";
 import MDEditor from "@uiw/react-md-editor";
-import DetailsTab from "../DetailsTab";
+import DetailsTab, {Bread} from "../DetailsTab";
 import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
@@ -21,6 +21,11 @@ function CharacterDetails(props) {
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
     const [ext, setExt] = useState(null)
+    const {data, setData} = useBreadContext()
+    const {bread, setBread} = useBreadContext()
+
+    const [target, setTarget] = useState(props.target);
+
     if (mode === "character") {
         return (
             <div>
@@ -29,30 +34,30 @@ function CharacterDetails(props) {
                     <h3>General information</h3>
                     <ListGroup>
                         <ListGroup.Item key="name">
-                            Name: {props.target.character.name}
+                            Name: {target.character.name}
                         </ListGroup.Item>
                         <ListGroup.Item key="class">
-                            Class: {props.target.character.levels}
+                            Class: {target.character.levels}
                         </ListGroup.Item>
                         <ListGroup.Item key="race">
-                            Race: {props.target.character.race}
+                            Race: {target.character.race}
                         </ListGroup.Item>
                         <ListGroup.Item key="owner">
-                            Owner: {props.target.owner.username}
+                            Owner: {target.owner.username}
                         </ListGroup.Item>
                         <ListGroup.Item key="id">
-                            UUID: {props.target.character.uid}
+                            UUID: {target.character.uid}
                         </ListGroup.Item>
                     </ListGroup>
                     <h5>Background</h5>
-                    <MDEditor.Markdown source={props.target.character.backstory} style={mdestyle}/>
+                    <MDEditor.Markdown source={target.character.backstory} style={mdestyle}/>
                 </Panel>
-                {props.target.happenings.length !== 0 && <div className={Style.Spacing}>
+                {target.happenings.length !== 0 && <div className={Style.Spacing}>
                     <Accordion>
-                        <Accordion.Item eventKey={props.target.character.uid}>
+                        <Accordion.Item eventKey={target.character.uid}>
                             <Accordion.Header>Involvements</Accordion.Header>
                             <Accordion.Body>
-                                {props.target.happenings.map(elem =>
+                                {target.happenings.map(elem =>
                                     <Panel key={elem.campaign.uid}>
                                         <Row>
                                             <Col xs={2}>
@@ -64,8 +69,9 @@ function CharacterDetails(props) {
                                             </Col>
                                             <Col xs={1}>
                                                 <FontAwesomeIcon icon={faSearch} onClick={event => {
-                                                    setExt(elem.campaign);
-                                                    setMode("campaign")}}/>
+                                                    setBread([...bread, new Bread(target.character.name, target.character.uid, "character", target.character.name,
+                                                        {type: "campaign", campaign: {...elem.campaign}, uid: elem.campaign.uid, representer: elem.campaign.name})])
+                                                }}/>
                                             </Col>
                                         </Row>
                                     </Panel>
@@ -74,10 +80,10 @@ function CharacterDetails(props) {
                         </Accordion.Item>
                     </Accordion>
                 </div>}
-                {props.target.extended_by.length !== 0 && <div>
+                {target.extended_by.length !== 0 && <div>
                     <h3>Extended by these characters</h3>
                     <div className={Style.Spacing}>
-                        {props.target.extended_by.map(elem =>
+                        {target.extended_by.map(elem =>
                             <Button variant="light" className={Style.MargButton} key={elem.uid} onClick={event => {
                                 setChild({type: "character", data: elem, uid: elem.uid})
                             }}> {elem.name} {elem.levels} </Button>
@@ -97,8 +103,6 @@ function CharacterDetails(props) {
             </div>
 
         );
-    } else if (mode === "campaign") {
-        return <DetailsTab item={{type: mode, data: ext, uid: ext.uid, representer: ext.name}} parent={props.target}/>
     }
 }
 

@@ -103,7 +103,7 @@ function SearchPanel(props) {
                 <div className={Style.Scrollable}>
                 <h5>Here are your results:</h5>
                 <ListGroup>
-                    {results.map(elem => <SearchResult id={elem.uid} item={elem.item} setMode={props.setMode} setTarget={props.setTarget} key={elem.uid}/>)}
+                    {results.map(elem => <SearchResult key={elem.uid} id={elem.uid} item={elem.item} setMode={props.setMode} setTarget={props.setTarget} key={elem.uid}/>)}
                 </ListGroup>
                 </div>
             </Panel>
