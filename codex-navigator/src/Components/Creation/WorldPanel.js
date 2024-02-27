@@ -81,6 +81,10 @@ function WorldPanel(props) {
 
     }
 
+    if(forbidden){
+        return <div><h3>You lack the authorization to edit this content.</h3></div>
+    }
+
     return (
         // TODO: Aggiungi la possibilità di scegliere un mondo padre
         <Form>

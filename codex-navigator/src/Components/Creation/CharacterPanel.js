@@ -11,7 +11,7 @@ import MultiverseExplorer from "../Bricks/MultiverseExplorer";
 import Picker from "../Bricks/Picker";
 import Style from "./CampaignPanel.module.css"
 
-function CharacterPanel() {
+function CharacterPanel(props) {
     const [backstory, setBackstory] = useState("**What's this character's backstory?**");
     const [name, setName] = useState("")
     const [race, setRace] = useState("")
@@ -25,13 +25,37 @@ function CharacterPanel() {
     const [sent, setSent] = useState(false)
     const [alertText, setAlertText] = useState("Data saved!")
     const [alertVariant, setAlertVariant] = useState("light")
+    const [forbidden, setForbidden] = useState(false)
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
+    const {userData, setUserData} = useAppContext()
 
     useEffect(() => {
-        get_users()
+        get_users().then(handle_props)
     }, [])
+
+    function handle_props() {
+        if (props.data !== undefined) {
+            if (props.data.owner.uid !== userData.uid && userData.isAdmin === false) {
+                setForbidden(true)
+                return;
+            }
+            setBackstory(props.data.character.backstory)
+            setOwner(props.data.owner)
+            setName(props.data.character.name)
+            setRace(props.data.character.race)
+            setLevels(props.data.character.levels)
+            setAlive(props.data.character.alive)
+            console.debug(props.data)
+            console.debug(props.data.based_on !== null && props.data.based_on.length > 0)
+            if (props.data.based_on !== null && props.data.based_on.length > 0) {
+                setBaseChar(props.data.based_on[0])
+            }
+
+        }
+    }
+
 
     async function get_users() {
         const response = await fetch(window.location.protocol + "//" + address + "/api/user/v1/", {
@@ -47,29 +71,51 @@ function CharacterPanel() {
     async function create_character() {
         let b_id = ""
         let o_over = ""
-        if(baseChar){
+        if (baseChar) {
             b_id = baseChar.uid
         }
-        if(owner){
+        if (owner) {
             o_over = owner.uid
         }
-        const response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/", {
-            method: "POST",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': "application/json"
-            },
-            body: JSON.stringify({
-                name: name,
-                race: race,
-                levels: levels,
-                backstory: backstory,
-                alive: alive,
-                based_on_id: b_id,
-                owner_override: o_over
-            })
-        });
+        let response
+        if (props.data === undefined) {
+            response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/", {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    race: race,
+                    levels: levels,
+                    backstory: backstory,
+                    alive: alive,
+                    based_on_id: b_id,
+                    owner_override: o_over
+                })
+            });
+        }
+        else{
+            response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/"+props.data.character.uid, {
+                method: "PATCH",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    race: race,
+                    levels: levels,
+                    backstory: backstory,
+                    alive: alive,
+                    based_on_id: b_id,
+                    // owner_override: o_over
+                })
+            });
+        }
         setSent(true)
         if (response.status === 201 || response.status === 200) {
             let data = await response.json()
@@ -84,6 +130,10 @@ function CharacterPanel() {
         }
 
 
+    }
+
+    if (forbidden) {
+        return <div><h3>You lack the authorization to edit this content.</h3></div>
     }
 
     return (
@@ -151,10 +201,10 @@ function CharacterPanel() {
                         <Accordion.Body>
                             <MultiverseExplorer savefun={setBaseChar}/>
                             {baseChar &&
-                            <Panel>You have chosen {baseChar.name} as your base character for this one.
-                                <a href="#" onClick={event => {
-                                    setBaseChar(null)
-                                }}>Click here to undo this choice.</a></Panel>}
+                                <Panel>You have chosen {baseChar.name} as your base character for this one.
+                                    <a href="#" onClick={event => {
+                                        setBaseChar(null)
+                                    }}>Click here to undo this choice.</a></Panel>}
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>

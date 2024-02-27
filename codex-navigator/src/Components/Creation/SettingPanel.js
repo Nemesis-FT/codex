@@ -105,7 +105,7 @@ function SettingPanel(props) {
     }
 
     if(forbidden){
-        return <div><h3>The requested resource cannot be edited by you.</h3></div>
+        return <div><h3>You lack the authorization to edit this content.</h3></div>
     }
 
     return (

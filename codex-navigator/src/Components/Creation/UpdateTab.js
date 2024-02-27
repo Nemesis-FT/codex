@@ -8,15 +8,18 @@ import Form from "react-bootstrap/Form";
 import {useAppContext} from "../../libs/Context";
 import SettingPanel from "./SettingPanel";
 import WorldPanel from "./WorldPanel";
+import CharacterDetails from "../Explorer/Specialization/CharacterDetails";
+import CharacterPanel from "./CharacterPanel";
 
 function CreateTab() {
     const [mode, setMode] = useState("Choose something...");
-    const [uuid, setUuid] = useState(null)
+    const [uuid, setUuid] = useState("")
     const [target, setTarget] = useState(null)
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
 
     async function get_data(){
+        setTarget(null)
         const response = await fetch(window.location.protocol + "//" + address + "/api/" + mode.toLowerCase() + "/v1/"+uuid, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -66,6 +69,7 @@ function CreateTab() {
                     {target && <div>
                         {target.type==="setting" && <SettingPanel data={target.data}/>}
                         {target.type==="world" && <WorldPanel data={target.data}/>}
+                        {target.type==="character" && <CharacterPanel data={target.data}/>}
                     </div>}
                 </Col>
             </Row>
