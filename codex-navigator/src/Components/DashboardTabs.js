@@ -4,6 +4,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import CreateTab from "./Creation/Creation";
 import SearchPanel from "./Explorer/SearchPanel";
 import ExploreTab from "./Explorer/ExploreTab";
+import UpdateTab from "./Creation/UpdateTab";
 
 function DashboardTabs() {
     const [key, setKey] = useState('search');
@@ -22,7 +23,7 @@ function DashboardTabs() {
                 <CreateTab/>
             </Tab>
             <Tab eventKey="update" title="Update">
-                Tab content for Update
+                <UpdateTab/>
             </Tab>
         </Tabs>
     );

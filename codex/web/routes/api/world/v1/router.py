@@ -52,6 +52,6 @@ def world_create(*, data: WorldEdit, current_user=Depends(get_current_user)):
               status_code=200, response_model=WorldRead)
 def world_edit(*, world_id: str, data: WorldEdit, current_user=Depends(get_current_user)):
     world = World.nodes.get(uid=world_id)
-    if not world.owner.is_connected(current_user):
+    if not world.creator.is_connected(current_user) and not current_user.isAdmin:
         raise Denied
     return quick_update(world, data)
