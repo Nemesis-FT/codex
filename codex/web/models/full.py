@@ -43,6 +43,7 @@ class WorldFull(Model):
 class CampaignHistory(Model):
     character_history: CharacterHistoryRead
     character: CharacterRead
+    owner: UserRead
 
 
 class CampaignFull(Model):

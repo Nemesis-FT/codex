@@ -10,6 +10,7 @@ import SettingPanel from "./SettingPanel";
 import WorldPanel from "./WorldPanel";
 import CharacterDetails from "../Explorer/Specialization/CharacterDetails";
 import CharacterPanel from "./CharacterPanel";
+import CampaignPanel from "./CampaignPanel";
 
 function CreateTab() {
     const [mode, setMode] = useState("Choose something...");
@@ -70,6 +71,7 @@ function CreateTab() {
                         {target.type==="setting" && <SettingPanel data={target.data}/>}
                         {target.type==="world" && <WorldPanel data={target.data}/>}
                         {target.type==="character" && <CharacterPanel data={target.data}/>}
+                        {target.type==="campaign" && <CampaignPanel data={target.data}/>}
                     </div>}
                 </Col>
             </Row>

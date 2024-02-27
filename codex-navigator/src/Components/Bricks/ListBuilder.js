@@ -46,11 +46,17 @@ export default function ListBuilder(props) {
             </Col>
             <Col>
                 <ListGroup>
-                    {props.selectedList.map(elem =>
-                        <ListGroup.Item key={elem.uid}>{elem[props.representer]} <a href="#"
-                                                                                    onClick={() => remove(elem)}>Remove</a>
-                        </ListGroup.Item>
-                    )}
+                    {props.selectedList !== undefined && <>
+                        {
+                            props.selectedList.map(elem =>
+                                <ListGroup.Item key={elem.uid}>{elem[props.representer]} <a href="#"
+                                                                                            onClick={() => remove(elem)}>Remove</a>
+                                </ListGroup.Item>
+                            )
+                        }
+                    </>
+                    }
+                    {props.selectedList === undefined && <p>!!!</p>}
                 </ListGroup>
             </Col>
 

@@ -33,7 +33,7 @@ def campaign_get(*, campaign_id: str, current_user=Depends(get_current_user)):
                         happenings=[CampaignHistory(character_history=
                         CharacterHistoryRead(
                             content=c.happenings.relationship(cha).content),
-                            character=cha)
+                            character=cha, owner=cha.owner.get())
                             for cha in c.happenings.all()])
 
 

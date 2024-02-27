@@ -15,7 +15,7 @@ import ListBuilder from "../Bricks/ListBuilder";
 import Panel from "../Bricks/Panel";
 import MultiverseBuilder from "../Bricks/MultiverseBuilder";
 
-function CampaignPanel() {
+function CampaignPanel(props) {
     const [synopsis, setSynopsis] = useState("**What's the campaign's synopsis?**");
     const [retelling, setRetelling] = useState("**What happens in this campaign?**");
 
@@ -35,27 +35,62 @@ function CampaignPanel() {
     const [campaigns, setCampaigns] = useState([]);
     const [baseCampaign, setBaseCampaign] = useState(null)
 
-    const {address, setAddress} = useAppContext()
-    const {token, setToken} = useAppContext()
     const [sent, setSent] = useState(false)
     const [alertText, setAlertText] = useState("Data saved!")
     const [alertVariant, setAlertVariant] = useState("light")
 
+    const [forbidden, setForbidden] = useState(false)
+    const [ready, setReady] = useState(false)
+
+    const {address, setAddress} = useAppContext()
+    const {token, setToken} = useAppContext()
+    const {userData, setUserData} = useAppContext()
+
+
     useEffect(() => {
-        get_settings()
-        get_users()
-        get_characters()
-        get_campaigns()
+        get_settings().then(
+            get_users().then(
+                get_characters().then(
+                    get_campaigns().then(handle_props().then(setReady(true))))))
     }, [])
 
-    useEffect(()=>{
+    async function handle_props() {
+        if (props.data !== undefined) {
+            if (props.data.dm.uid !== userData.uid && userData.isAdmin === false) {
+                setForbidden(true)
+                return;
+            }
+            console.debug(props.data)
+            setName(props.data.campaign.name)
+            setStartDate(props.data.campaign.start_date)
+            setEndDate(props.data.campaign.end_date)
+            setSynopsis(props.data.campaign.synopsis)
+            setRetelling(props.data.campaign.retelling)
+
+            setChosenUsers(props.data.members)
+            setChosenSettings(props.data.setting)
+            let tmp = []
+            props.data.happenings.forEach(chara => {
+                let item = {
+                    selection: chara.character,
+                    userSel: chara.owner,
+                    content: chara.character_history.content,
+                    pg_name: chara.character.name + " - " + chara.owner.username
+                }
+                tmp.push(item)
+            })
+            setChosenChars(tmp)
+        }
+    }
+
+    useEffect(() => {
         let items = []
-        for (const char of chosenChars){
-            if(!chosenUsers.includes(char.userSel)){
+        for (const char of chosenChars) {
+            if (!chosenUsers.includes(char.userSel)) {
                 items.push(char)
             }
         }
-        for (const item of items){
+        for (const item of items) {
             setChosenChars(chosenChars.filter((elem) => elem !== item))
         }
     }, [chosenUsers])
@@ -144,8 +179,8 @@ function CampaignPanel() {
                     }
 
                 });
-                if(response.status !== 201 && response.status !== 200){
-                    alert("Something went wrong while processing setting "+setting.uid+".")
+                if (response.status !== 201 && response.status !== 200) {
+                    alert("Something went wrong while processing setting " + setting.uid + ".")
                 }
             }
 
@@ -161,8 +196,8 @@ function CampaignPanel() {
                         content: char.content
                     })
                 });
-                if(response.status !== 201 && response.status !== 200){
-                    alert("Something went wrong while processing character "+char.selection.uid + " "+ char.selection.name+".")
+                if (response.status !== 201 && response.status !== 200) {
+                    alert("Something went wrong while processing character " + char.selection.uid + " " + char.selection.name + ".")
                 }
                 const response2 = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/" + data.uid + "/user/" + char.userSel.uid + "/" + char.selection.uid, {
                     method: "POST",
@@ -172,8 +207,8 @@ function CampaignPanel() {
                         'Accept': "application/json"
                     },
                 });
-                if(response.status !== 201 && response.status !== 200){
-                    alert("Something went wrong while processing user "+char.userSel.uid+".")
+                if (response.status !== 201 && response.status !== 200) {
+                    alert("Something went wrong while processing user " + char.userSel.uid + ".")
                 }
             }
 
@@ -188,6 +223,13 @@ function CampaignPanel() {
         }
     }
 
+    if (!ready) {
+        return <div><h3>Loading...</h3></div>
+    }
+
+    if (forbidden) {
+        return <div><h3>You lack the authorization to edit this content.</h3></div>
+    }
 
     return (
         <div>
