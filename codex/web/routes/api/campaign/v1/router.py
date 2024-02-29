@@ -109,3 +109,24 @@ def campaign_add_user(*, campaign_id: str, user_id: str, character_id: str, curr
     r = campaign.members.connect(user, {"character": character_id})
     r.save()
     return campaign
+
+
+@router.delete("/{campaign_id}/clear", summary="Clears all dependencies of the campaign", response_model=CampaignRead)
+def campaign_clear(*, campaign_id: str, current_user=Depends(get_current_user)):
+    campaign = Campaign.nodes.get(uid=campaign_id)
+    if not campaign.dm.is_connected(current_user):
+        raise Denied
+    for setting in campaign.setting.all():
+        setting.campaigns.disconnect(campaign)
+        setting.save()
+    campaign.setting.disconnect_all()
+    for happening in campaign.happenings.all():
+        happening.events.disconnect(campaign)
+        happening.save()
+    campaign.happenings.disconnect_all()
+    for member in campaign.members.all():
+        member.partecipations.disconnect(campaign)
+        member.save()
+    campaign.members.disconnect_all()
+    campaign.save()
+    return campaign

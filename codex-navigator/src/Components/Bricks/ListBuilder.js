@@ -23,9 +23,7 @@ export default function ListBuilder(props) {
     }
 
     async function remove(item) {
-        if (props.selectedList.includes(selection)) {
-            props.setSelectedList(props.selectedList.filter((elem) => elem !== item))
-        }
+        props.setSelectedList(props.selectedList.filter((elem) => elem !== item))
     }
 
     return (

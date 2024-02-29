@@ -70,6 +70,7 @@ function CampaignPanel(props) {
             setChosenUsers(props.data.members)
             setChosenSettings(props.data.setting)
             let tmp = []
+            console.debug("IMPORTING CHARS")
             props.data.happenings.forEach(chara => {
                 let item = {
                     selection: chara.character,
@@ -79,19 +80,32 @@ function CampaignPanel(props) {
                 }
                 tmp.push(item)
             })
+            console.debug("???")
+            console.debug(tmp)
             setChosenChars(tmp)
         }
     }
 
     useEffect(() => {
-        let items = []
-        for (const char of chosenChars) {
-            if (!chosenUsers.includes(char.userSel)) {
-                items.push(char)
-            }
+        if(!ready){
+            console.debug("AAA")
+            return;
         }
-        for (const item of items) {
-            setChosenChars(chosenChars.filter((elem) => elem !== item))
+        else{
+            console.debug("!DIO")
+            let items = []
+            for (const char of chosenChars) {
+                let isThere = false
+                for (const user of chosenUsers){
+                    if(user.uid === char.userSel.uid){
+                        isThere = true
+                    }
+                }
+                if (isThere) {
+                    items.push(char)
+                }
+            }
+            setChosenChars(items)
         }
     }, [chosenUsers])
 
@@ -148,27 +162,55 @@ function CampaignPanel(props) {
         if (baseCampaign) {
             base_campaign = baseCampaign.uid
         }
-        setSent(true)
-        const response = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/", {
-            method: "POST",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Accept': "application/json"
-            },
-            body: JSON.stringify({
-                name: name,
-                start_date: startDate,
-                end_date: endDate,
-                synopsis: synopsis,
-                retelling: retelling,
-                uid: base_campaign
-            })
-        });
-
+        let response
+        if (props.data === undefined) {
+            response = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/", {
+                method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    start_date: startDate,
+                    end_date: endDate,
+                    synopsis: synopsis,
+                    retelling: retelling,
+                    uid: base_campaign
+                })
+            });
+        }
+        else{
+            response = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/"+props.data.campaign.uid, {
+                method: "PATCH",
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    start_date: startDate,
+                    end_date: endDate,
+                    synopsis: synopsis,
+                    retelling: retelling
+                })
+            });
+        }
         if (response.status === 201 || response.status === 200) {
             let data = await response.json()
             console.debug(data)
+            if(props.data !== undefined){
+                response = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/"+props.data.campaign.uid+"/clear", {
+                    method: "DELETE",
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': "application/json"
+                    },
+                });
+            }
             for (const setting of chosenSettings) {
                 const response = await fetch(window.location.protocol + "//" + address + "/api/campaign/v1/" + data.uid + "/setting/" + setting.uid, {
                     method: "POST",
@@ -211,7 +253,7 @@ function CampaignPanel(props) {
                     alert("Something went wrong while processing user " + char.userSel.uid + ".")
                 }
             }
-
+            setSent(true)
             setAlertText("Data saved!")
             setAlertVariant("light")
             setTimeout(() => {
