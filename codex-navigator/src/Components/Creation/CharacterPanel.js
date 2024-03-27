@@ -10,6 +10,8 @@ import Panel from "../Bricks/Panel";
 import MultiverseExplorer from "../Bricks/MultiverseExplorer";
 import Picker from "../Bricks/Picker";
 import Style from "./CampaignPanel.module.css"
+import MultiverseBuilder from "../Bricks/MultiverseBuilder";
+import RelationshipBuilder from "../Bricks/RelationshipBuilder";
 
 function CharacterPanel(props) {
     const [backstory, setBackstory] = useState("**What's this character's backstory?**");
@@ -22,6 +24,10 @@ function CharacterPanel(props) {
     const [users, setUsers] = useState([])
     const [owner, setOwner] = useState(null)
 
+    const [clist, setClist] = useState([]);
+    const [chosenChars, setChosenChars] = useState([]);
+    const [originalChars, setOriginalChars] = useState([])
+
     const [sent, setSent] = useState(false)
     const [alertText, setAlertText] = useState("Data saved!")
     const [alertVariant, setAlertVariant] = useState("light")
@@ -32,8 +38,32 @@ function CharacterPanel(props) {
     const {userData, setUserData} = useAppContext()
 
     useEffect(() => {
-        get_users().then(handle_props)
+        get_users().then(get_characters().then(handle_props))
     }, [])
+
+    class Action {
+
+        ADD = 0
+        DEL = 1
+
+        constructor(mode, targetId) {
+            // Mode 0 equals to
+            this.mode = mode
+            this.targetId = targetId
+        }
+    }
+
+    async function get_characters() {
+        const response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        let data = await response.json()
+        setClist(data)
+        console.debug(data)
+    }
+
 
     function handle_props() {
         if (props.data !== undefined) {
@@ -49,6 +79,18 @@ function CharacterPanel(props) {
             setAlive(props.data.character.alive)
             console.debug(props.data)
             console.debug(props.data.based_on !== null && props.data.based_on.length > 0)
+            let tmp = []
+            props.data.relationships.forEach(elem => {
+                    let item = {
+                        selection: elem.character,
+                        content: elem.character_relationship.content,
+                        pg_name: elem.character.name
+                    }
+                    tmp.push(item)
+                }
+            )
+            setChosenChars(tmp)
+            setOriginalChars(tmp)
             if (props.data.based_on !== null && props.data.based_on.length > 0) {
                 setBaseChar(props.data.based_on[0])
             }
@@ -96,9 +138,8 @@ function CharacterPanel(props) {
                     owner_override: o_over
                 })
             });
-        }
-        else{
-            response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/"+props.data.character.uid, {
+        } else {
+            response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/" + props.data.character.uid, {
                 method: "PATCH",
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -119,6 +160,45 @@ function CharacterPanel(props) {
         setSent(true)
         if (response.status === 201 || response.status === 200) {
             let data = await response.json()
+            let tmpChars = chosenChars;
+            if (props.data !== undefined) {
+                for (const original of originalChars) {
+                    let item = tmpChars.find((element) => element.selection.uid === original.selection.uid && element.content === original.content)
+                    // Se l'elemento è stato rimosso
+                    if (item === null || item === undefined) {
+                        response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/" + data.uid + "/relationship/" + original.selection.uid, {
+                            method: "DELETE",
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': "application/json"
+                            },
+                        });
+                        console.debug("PRUNE relationship with " + original.pg_name + " (" + original.content + ")")
+                    } else {
+                        // Se l'elemento non è stato rimosso, non lo creiamo nuovamente
+                        tmpChars = tmpChars.filter(elem => elem !== item)
+                    }
+
+                }
+            }
+            else{
+                console.debug("Setting up relationships...")
+                for (const cha of tmpChars) {
+                    response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/" + data.uid + "/relationship/" + cha.selection.uid, {
+                        method: "POST",
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'Accept': "application/json"
+                        },
+                        body: JSON.stringify({
+                            content: cha.content
+                        })
+                    });
+                    console.debug("Set up relationship with " + cha.pg_name + " (" + cha.content + ")")
+                }
+            }
             setAlertText("Data saved!")
             setAlertVariant("light")
             setTimeout(() => {
@@ -128,8 +208,6 @@ function CharacterPanel(props) {
             setAlertText("Something went wrong.")
             setAlertVariant("danger")
         }
-
-
     }
 
     if (forbidden) {
@@ -236,6 +314,13 @@ function CharacterPanel(props) {
                     }}>Click here to undo this choice.</a>
                 </Panel>}
 
+            </Panel>
+
+            <Panel>
+                <h4>Character Relationships</h4>
+                <p>What characters are related to this one?</p>
+                <RelationshipBuilder selectedList={chosenChars} setSelectedList={setChosenChars}
+                                     representer={"pg_name"}/>
             </Panel>
             <Button variant="light" onClick={create_character}>Save this content</Button>
         </div>
