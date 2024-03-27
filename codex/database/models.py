@@ -15,6 +15,9 @@ class PartecipationRel(StructuredRel):
 class CharacterHistoryRel(StructuredRel):
     content = StringProperty(required=True)
 
+class CharacterRelationship(StructuredRel):
+    type = StringProperty(required=True)
+
 
 class User(StructuredNode):
     uid = UniqueIdProperty()
@@ -56,6 +59,7 @@ class Character(StructuredNode):
     based_on = RelationshipTo("Character", "BASED_ON", cardinality=ZeroOrOne)
     extended_by = RelationshipTo("Character", "EXTENDS", cardinality=ZeroOrMore)
     events = RelationshipTo("Campaign", "DID", cardinality=ZeroOrMore, model=CharacterHistoryRel)
+    relationships = RelationshipTo("Character", "KNOWS", cardinality=ZeroOrMore, model=CharacterRelationship)
 
 
 class Setting(StructuredNode):

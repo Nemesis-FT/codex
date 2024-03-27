@@ -11,7 +11,8 @@ __all__ = (
     "CharacterEdit",
     "CharacterCreate",
     "CampaignEdit",
-    "CharacterHistoryEdit"
+    "CharacterHistoryEdit",
+    "CharacterRelationshipEdit"
 )
 
 
@@ -57,4 +58,7 @@ class CampaignEdit(base.ORMModel):
 
 
 class CharacterHistoryEdit(base.Model):
+    content: str
+
+class CharacterRelationshipEdit(base.Model):
     content: str

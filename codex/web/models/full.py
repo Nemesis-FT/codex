@@ -2,7 +2,7 @@ import typing as t
 
 from codex.web.models import read
 from codex.web.models.base import Model
-from codex.web.models.read import CharacterRead, UserRead, WorldRead, SettingRead, CampaignRead, CharacterHistoryRead
+from codex.web.models.read import CharacterRead, UserRead, WorldRead, SettingRead, CampaignRead, CharacterHistoryRead, CharacterRelationshipRead
 
 
 class CharacterHistoryFull(Model):
@@ -10,11 +10,17 @@ class CharacterHistoryFull(Model):
     campaign: CampaignRead
 
 
+class CharacterRelationshipFull(Model):
+    character_relationship: CharacterRelationshipRead
+    character: CharacterRead
+
+
 class CharacterFull(Model):
     character: CharacterRead
     based_on: t.List[CharacterRead]
     extended_by: t.List[CharacterRead]
     happenings: t.List[CharacterHistoryFull]
+    relationships: t.List[CharacterRelationshipFull]
     owner: UserRead
 
 

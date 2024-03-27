@@ -49,9 +49,39 @@ function CharacterDetails(props) {
                             UUID: {target.character.uid}
                         </ListGroup.Item>
                     </ListGroup>
+                    <br/>
                     <h5>Background</h5>
                     <MDEditor.Markdown source={target.character.backstory} style={mdestyle}/>
                 </Panel>
+
+                {target.relationships.length !== 0 && <div>
+                    <Accordion>
+                        <Accordion.Item eventKey={target.character.uid}>
+                            <Accordion.Header>Meaningful relationships</Accordion.Header>
+                            <Accordion.Body>
+                                {target.relationships.map(elem =>
+                                    <Panel key={elem.character.uid}>
+                                        <Row>
+                                            <Col xs={2}>
+                                                Character: {elem.character.name}
+                                            </Col>
+                                            <Col>
+                                                Type: {elem.character_relationship.content}
+                                            </Col>
+                                            <Col xs={1}>
+                                                <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                                    setBread([...bread, new Bread(target.character.name, target.character.uid, "character", target.character.name,
+                                                        {type: "character", character: {...elem.character}, uid: elem.character.uid, representer: elem.character.name})])
+                                                }}/>
+                                            </Col>
+                                        </Row>
+                                    </Panel>
+                                )}
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
+                </div>}
+
                 {target.happenings.length !== 0 && <div className={Style.Spacing}>
                     <Accordion>
                         <Accordion.Item eventKey={target.character.uid}>
