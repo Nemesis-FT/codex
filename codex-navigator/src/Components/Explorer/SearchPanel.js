@@ -10,6 +10,16 @@ import Style from "./SearchPanel.module.css"
 import SearchResult from "./SearchResult";
 import ListGroup from "react-bootstrap/ListGroup";
 
+export class QueryResult {
+    constructor(representer, summary, uid, type, data) {
+        this.representer = representer
+        this.summary = summary
+        this.uid = uid
+        this.type = type
+        this.data = data
+    }
+}
+
 function SearchPanel(props) {
 
     const [query, setQuery] = useState("")
@@ -17,17 +27,6 @@ function SearchPanel(props) {
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
-
-
-    class QueryResult {
-        constructor(representer, summary, uid, type, data) {
-            this.representer = representer
-            this.summary = summary
-            this.uid = uid
-            this.type = type
-            this.data = data
-        }
-    }
 
     async function gather_everything() {
         let result = []

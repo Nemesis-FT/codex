@@ -17,6 +17,8 @@ import SettingDetails from "./Specialization/SettingDetails";
 import WorldDetails from "./Specialization/WorldDetails";
 
 import {useBreadContext} from "../../libs/Context";
+import {useNavigate} from "react-router-dom";
+import navi from "../Navi";
 
 export class Bread {
     constructor(representer, uid, type, data, next_data) {
@@ -34,9 +36,12 @@ function DetailsTab(props) {
     const [done, setDone] = useState(false)
     const [parent, setParent] = useState(props.parent)
     const [bread, setBread] = useState([])
+    const navigate = useNavigate()
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
+
+    let lookup = {"character": "chr", "campaign":"cmp", "world":"wrl", "setting":"stt"}
 
     useEffect(() => {
         setDone(false)
@@ -49,6 +54,9 @@ function DetailsTab(props) {
     }, [bread])
 
     async function gather_more(target) {
+        if(target === null){
+            return
+        }
         const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -60,13 +68,17 @@ function DetailsTab(props) {
 
         setData(d)
     }
-
     return (
         <div>
+            <br/>
             <BreadContext.Provider value={{setBread, bread, data, setData}}>
                 <Breadcrumb>
                     <Breadcrumb.Item href="#" onClick={e => {
-                        props.setMode("search")
+                        if (props.setMode !== undefined) {
+                            props.setMode("search")
+                        } else {
+                            navigate("/srv/home")
+                        }
                     }}>
                         Search
                     </Breadcrumb.Item>
@@ -87,6 +99,7 @@ function DetailsTab(props) {
                         }>{elem.representer}</Breadcrumb.Item>
                     })}
                 </Breadcrumb>
+
                 {done === true && <>
                     {data.type === "character" && <CharacterDetails target={data}/>}
                     {data.type === "campaign" && <CampaignDetails target={data}/>}
@@ -95,6 +108,14 @@ function DetailsTab(props) {
                 </>}
                 {done === false && <p>Please wait, now loading...</p>}
             </BreadContext.Provider>
+            <br/>
+            <a href="#" onClick={event => {
+                navigator.share({
+                    url: window.location.origin + "/" + address + "/specific/" + lookup[data.type] + "/" + data[data.type].uid,
+                    text: "Check out " + data.representer + " on Codex",
+                    title: data.representer
+                })
+            }}>Share permalink</a>
         </div>)
 
 }
