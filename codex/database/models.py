@@ -21,9 +21,8 @@ class CharacterRelationship(StructuredRel):
 
 class User(StructuredNode):
     uid = UniqueIdProperty()
+    ext_id = IntegerProperty(unique_index=True, required=True)
     username = StringProperty(required=True)
-    email = StringProperty(unique_index=True)
-    password = StringProperty(required=True)
     isAdmin = BooleanProperty(default=False)
 
     characters = RelationshipTo("Character", "CREATED", ZeroOrMore)

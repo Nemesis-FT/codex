@@ -20,7 +20,6 @@ class UserRead(base.ORMModel):
     **Read** model for :class:`.database.models.User`.
     """
     uid: str
-    email: str
     username: str
     isAdmin: bool
 

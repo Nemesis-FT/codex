@@ -56,6 +56,8 @@ def setting_optional(name) -> typing.Optional[str]:
 
 # Variabili d'ambiente necessarie
 JWT_KEY = setting_required("JWT_KEY")
+OAUTH2_CLIENT = setting_required("OAUTH2_CLIENT")
+OAUTH2_SECRET = setting_required("OAUTH2_SECRET")
 # Variabili d'ambiente necessarie, ma non definite qui
 # BIND_IP
 # BIND_PORT
