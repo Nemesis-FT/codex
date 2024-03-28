@@ -19,6 +19,7 @@ function Navi() {
     async function logout(){
         sessionStorage.removeItem("jwt")
         setToken(null)
+        setUserData(null)
     }
 
     return (

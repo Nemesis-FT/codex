@@ -16,7 +16,7 @@ export default function Landing() {
         if (localStorage.getItem("address") && address == null) {
             let address = localStorage.getItem("address")
             setAddress(address)
-            navigator("/srv/login")
+            navigator("/srv/home")
         }
     })
 
