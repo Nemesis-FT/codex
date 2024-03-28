@@ -20,14 +20,14 @@ router = fastapi.routing.APIRouter(
 @router.get("/",
             summary="Get the list of available worlds",
             status_code=200, response_model=t.List[WorldRead])
-def worlds_get(*, current_user=Depends(get_current_user)):
+def worlds_get():
     return World.nodes.all()
 
 
 @router.get("/{world_id}",
             summary="Get data about a specific world",
             status_code=200, response_model=WorldFull)
-def world_get(*, world_id: str, current_user=Depends(get_current_user)):
+def world_get(*, world_id: str):
     w = World.nodes.get(uid=world_id)
     based_on = None
     tmp = w.based_on.all()

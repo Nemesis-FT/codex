@@ -20,14 +20,14 @@ router = fastapi.routing.APIRouter(
 @router.get("/",
             summary="Get the list of available settings",
             status_code=200, response_model=t.List[SettingRead])
-def setting_get(*, current_user=Depends(get_current_user)):
+def setting_get():
     return Setting.nodes.all()
 
 
 @router.get("/{setting_id}",
             summary="Get data about a specific setting",
             status_code=200, response_model=SettingFull)
-def setting_get(*, setting_id: str, current_user=Depends(get_current_user)):
+def setting_get(*, setting_id: str):
     s = Setting.nodes.get(uid=setting_id)
     return SettingFull(setting=s, campaigns=s.campaigns.all(), world=s.world.all()[0], owner=s.owner.all()[0])
 

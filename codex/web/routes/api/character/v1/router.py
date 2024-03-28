@@ -20,14 +20,14 @@ router = fastapi.routing.APIRouter(
 @router.get("/",
             summary="Get the list of root characters",
             status_code=200, response_model=t.List[CharacterRead])
-def chars_get(*, current_user=Depends(get_current_user)):
+def chars_get():
     return [c for c in Character.nodes.all() if len(c.based_on) == 0]
 
 
 @router.get("/{char_id}",
             summary="Get data about a specific character",
             status_code=200, response_model=CharacterFull)
-def char_get(*, char_id: str, current_user=Depends(get_current_user)):
+def char_get(*, char_id: str):
     c = Character.nodes.get(uid=char_id)
     return CharacterFull(character=c, based_on=c.based_on.all(), extended_by=c.extended_by.all(),
                          owner=c.owner.all()[0],
