@@ -13,6 +13,7 @@ export default function SpecificRedirect(){
     const {address, setAddress} = useAppContext()
     const navigate = useNavigate()
     const [result, setResult] = useState(null)
+    const [error, setError] = useState(true)
 
     const [done, setDone] = useState(false)
     useEffect(()=>{
@@ -30,11 +31,18 @@ export default function SpecificRedirect(){
         if(type==null){
             return
         }
-        const response = await fetch(window.location.protocol + "//" + addr + "/api/" + lookup[type] + "/v1/"+id);
-        let data = await response.json()
-        setResult(new QueryResult(data[lookup[type]].name, "", data[lookup[type]].uid, lookup[type], data))
-    }
+        try{
+            const response = await fetch(window.location.protocol + "//" + addr + "/api/" + lookup[type] + "/v1/"+id);
+            let data = await response.json()
+            setResult(new QueryResult(data[lookup[type]].name, "", data[lookup[type]].uid, lookup[type], data))
+        } catch (e){
+            setError(true)
+        }
 
+    }
+    if (error){
+        return (<Panel>What you're looking for cannot be found. <a href="#" onClick={event => {navigate("/srv/home")}}>Click here</a> to go to the homepage.</Panel>)
+    }
     if (!done){
         return (<Panel>Please wait while we roll [History] on this content...</Panel>)
     }

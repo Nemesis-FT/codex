@@ -6,15 +6,16 @@ from fastapi.security import OAuth2, APIKeyHeader
 from social_core.backends.oauth import BaseOAuth2
 from starlette.requests import Request
 
+from codex.configuration import OAUTH2_API_URL, OAUTH2_AUTH_URL, OAUTH2_TOKEN_URL
 from codex.database import User
 from codex.web.crud import quick_create
 
 
 class AuthMasterOAuth2(BaseOAuth2):
     name = "AuthMaster"
-    API_URL = "https://authmaster.fermitech.dev/"
-    AUTHORIZATION_URL = "https://authmaster.fermitech.dev/oauth/authorize"
-    ACCESS_TOKEN_URL = "https://authmaster.fermitech.dev/oauth/token"
+    API_URL = OAUTH2_API_URL
+    AUTHORIZATION_URL = OAUTH2_AUTH_URL
+    ACCESS_TOKEN_URL = OAUTH2_TOKEN_URL
     ACCESS_TOKEN_METHOD = "POST"
     REDIRECT_STATE = False
     DEFAULT_SCOPE = ["Profile"]
@@ -50,9 +51,10 @@ class AuthMasterOAuth2(BaseOAuth2):
 
 oauth = OAuth2()
 bearer = APIKeyHeader(name='Cookie', scheme_name='authorization')
+bearer_default = APIKeyHeader(name='Authorization', scheme_name='authorization')
 
 
-def get_current_user(request: Request, auth=Depends(oauth), b=Depends(bearer)):
+def get_current_user(request: Request, auth=Depends(oauth), b=Depends(bearer_default)):
     try:
         user = User.nodes.get(ext_id=request.user.id)
         user.username = request.user.username

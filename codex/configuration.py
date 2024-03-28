@@ -58,6 +58,13 @@ def setting_optional(name) -> typing.Optional[str]:
 JWT_KEY = setting_required("JWT_KEY")
 OAUTH2_CLIENT = setting_required("OAUTH2_CLIENT")
 OAUTH2_SECRET = setting_required("OAUTH2_SECRET")
+OAUTH2_API_URL = setting_required("OAUTH2_API_URL")
+OAUTH2_AUTH_URL = setting_required("OAUTH2_AUTH_URL")
+OAUTH2_TOKEN_URL = setting_required("OAUTH2_TOKEN_URL")
+FRONTEND_URL = setting_required("FRONTEND_URL")
+BACKEND_URL = setting_required("BACKEND_URL")
+# Authmaster ids for admin role
+ADMIN_IDS = setting_required("EXT_ADMIN_IDS")
 # Variabili d'ambiente necessarie, ma non definite qui
 # BIND_IP
 # BIND_PORT

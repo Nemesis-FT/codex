@@ -7,8 +7,9 @@ import dotenv
 import fastapi.middleware.cors as cors
 import uvicorn
 from fastapi import Depends
+from starlette.responses import RedirectResponse
 
-from codex.configuration import JWT_KEY, OAUTH2_CLIENT, OAUTH2_SECRET
+from codex.configuration import JWT_KEY, OAUTH2_CLIENT, OAUTH2_SECRET, FRONTEND_URL, BACKEND_URL, ADMIN_IDS
 from codex.database import User
 from codex.web.crud import quick_create
 
@@ -62,7 +63,23 @@ async def login_callback(request: Request, b=Depends(bearer)):
     except Exception:
         quick_create(User(ext_id=request.user.id, username=request.user.username))
     finally:
-        return {"token": b}
+        return RedirectResponse(f"{FRONTEND_URL}/{BACKEND_URL}/token/"+b.split("=")[1].split(" ")[1][:-1])
+
+log.info("Setting up admins...")
+
+ids = ADMIN_IDS.split(",")
+old_admins = User.nodes.filter(isAdmin=True)
+for old in old_admins:
+    if str(old.ext_id) not in ids:
+        old.isAdmin = False
+        old.save()
+for id in ids:
+    try:
+        usr = User.nodes.get(ext_id=int(id))
+        usr.isAdmin = True
+        usr.save()
+    except Exception:
+        pass
 
 log.info("Running codex application with Uvicorn...")
 # noinspection PyTypeChecker

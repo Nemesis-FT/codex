@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Panel from "../Bricks/Panel";
 import {Breadcrumb, Dropdown, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
@@ -37,6 +37,7 @@ function DetailsTab(props) {
     const [parent, setParent] = useState(props.parent)
     const [bread, setBread] = useState([])
     const navigate = useNavigate()
+    const [error, setError] = useState(false)
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
@@ -57,16 +58,23 @@ function DetailsTab(props) {
         if(target === null){
             return
         }
-        const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        let d = await response.json();
-        d.type = target.type
-        d.representer = target.representer
+        try{
+            const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-        setData(d)
+            let d = await response.json();
+            d.type = target.type
+            d.representer = target.representer
+
+            setData(d)
+        }
+        catch (e) {
+            setError(true)
+        }
+
     }
     return (
         <div>
@@ -99,7 +107,7 @@ function DetailsTab(props) {
                         }>{elem.representer}</Breadcrumb.Item>
                     })}
                 </Breadcrumb>
-
+                {error === false && <>
                 {done === true && <>
                     {data.type === "character" && <CharacterDetails target={data}/>}
                     {data.type === "campaign" && <CampaignDetails target={data}/>}
@@ -107,6 +115,8 @@ function DetailsTab(props) {
                     {data.type === "world" && <WorldDetails target={data}/>}
                 </>}
                 {done === false && <p>Please wait, now loading...</p>}
+                </>}
+                {error === true && <Panel>The resource cannot be loaded.</Panel>}
             </BreadContext.Provider>
             <br/>
             <a href="#" onClick={event => {

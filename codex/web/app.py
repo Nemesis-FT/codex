@@ -38,9 +38,9 @@ app.include_router(campaign_router)
 app.include_router(server_router)
 app.include_router(OAuth2Router)
 
+app.add_exception_handler(ApplicationException, handle_application_error)
 app.add_exception_handler(DoesNotExist, handle_neomodel_not_found)
 app.add_exception_handler(UniqueProperty, handle_neomodel_not_unique)
 app.add_exception_handler(MultipleNodesReturned, handle_neomodel_multiple_results)
-app.add_exception_handler(ApplicationException, handle_application_error)
 app.add_exception_handler(Exception, handle_generic_error)
 

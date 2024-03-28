@@ -35,18 +35,26 @@ export default function Home() {
     }, [token, address])
 
     async function getUserData() {
-        const response = await fetch(window.location.protocol + "//" + address + "/api/user/v1/me", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        let data = await response.json()
-        setUserData(data);
-        console.debug(data)
+        try{
+            const response = await fetch(window.location.protocol + "//" + address + "/api/user/v1/me", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            let data = await response.json()
+            setUserData(data);
+            console.debug(data)
+        }
+        catch (e) {
+            sessionStorage.removeItem("jwt")
+            setToken(null)
+            setUserData(null)
+        }
+
     }
 
     if(!done){
-        return (<Panel>Please wait while we roll [History] on your user id...</Panel>)
+        return (<Panel>Please wait while we roll to load this content...</Panel>)
     }
 
     if (userData) {
@@ -60,7 +68,7 @@ export default function Home() {
 
         );
     }
-    else {
+    else if (token===null){
         return (<div>
             <Jumbotron title={"Welcome to this codex instance!"}>
                 <p> Since you're not logged in, you can only inspect the contents of this instance. Creating and editing content are actions reserved only to authorized users.</p>
@@ -68,6 +76,9 @@ export default function Home() {
             </Jumbotron>
             <ExploreTab/>
         </div>)
+    }
+    else{
+        return (<Panel>Please wait while we roll [History] on your user id...</Panel>)
     }
 
 
