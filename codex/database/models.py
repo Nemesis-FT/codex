@@ -15,6 +15,7 @@ class PartecipationRel(StructuredRel):
 class CharacterHistoryRel(StructuredRel):
     content = StringProperty(required=True)
 
+
 class CharacterRelationship(StructuredRel):
     type = StringProperty(required=True)
 
@@ -81,7 +82,10 @@ class World(StructuredNode):
     settings = RelationshipTo("Setting", "HAS", cardinality=ZeroOrMore)
 
 
-install_all_labels()
+from neomodel import config
+
+# before loading your node definitions
+config.AUTO_INSTALL_LABELS = True
 # import datetime
 # date = datetime.datetime.now().date()
 # campaign = Campaign(name="Test", start_date=date).save()
