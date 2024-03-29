@@ -157,6 +157,9 @@ function CampaignPanel(props) {
 
 
     async function create_campaign() {
+        setSent(true)
+        setAlertText("Saving data, please wait...")
+        setAlertVariant("light")
         console.debug(startDate)
         let base_campaign = ""
         if (baseCampaign) {
@@ -364,6 +367,7 @@ function CampaignPanel(props) {
                     <MultiverseBuilder selectedList={chosenChars} setSelectedList={setChosenChars}
                                        representer={"pg_name"} users={chosenUsers}/>
                 </Panel>
+                {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
                 <Button variant="light" onClick={create_campaign}>Save this content</Button>
 
             </div>

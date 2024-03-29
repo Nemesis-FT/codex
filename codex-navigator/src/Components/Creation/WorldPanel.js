@@ -36,6 +36,9 @@ function WorldPanel(props) {
     }
 
     async function create_world() {
+        setSent(true)
+        setAlertText("Saving data, please wait...")
+        setAlertVariant("light")
         let response
         if (props.data === undefined) {
             response = await fetch(window.location.protocol + "//" + address + "/api/world/v1/", {
@@ -113,7 +116,7 @@ function WorldPanel(props) {
                     />
                 </Col>
             </Form.Group>
-
+            {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
             <Form.Group as={Row} className="mb-3">
                 <Col sm={{span: 10, offset: 2}}>
                     <Button variant="light" onClick={create_world}>Save this content</Button>

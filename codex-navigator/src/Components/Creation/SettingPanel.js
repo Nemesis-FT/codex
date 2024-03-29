@@ -60,6 +60,9 @@ function SettingPanel(props) {
     }
 
     async function create_setting() {
+        setSent(true)
+        setAlertText("Saving data, please wait...")
+        setAlertVariant("light")
         let response
         if (props.data === undefined) {
             response = await fetch(window.location.protocol + "//" + address + "/api/setting/v1/" + selWorld.uid, {
@@ -110,7 +113,6 @@ function SettingPanel(props) {
 
     return (
         <Form>
-            {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
             <Form.Group as={Row} className="mb-3" controlId="formHorizontalEmail">
                 <Form.Label column sm={2}>
                     World
@@ -130,7 +132,6 @@ function SettingPanel(props) {
                         </Dropdown.Menu>
                     </Dropdown>
                     <p></p>
-                    {selWorld && <MDEditor.Markdown source={selWorld.description} style={{whiteSpace: 'pre-wrap'}}/>}
                 </Col>
 
             </Form.Group>
@@ -158,7 +159,7 @@ function SettingPanel(props) {
                         />
                     </Col>
                 </Form.Group>
-
+                {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
                 <Form.Group as={Row} className="mb-3">
                     <Col sm={{span: 10, offset: 2}}>
                         <Button variant="light" onClick={create_setting}>Save this content</Button>

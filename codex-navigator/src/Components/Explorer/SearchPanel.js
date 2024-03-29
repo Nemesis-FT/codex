@@ -60,7 +60,7 @@ function SearchPanel(props) {
         let result = []
         for (const item of data) {
             let distance = levenshteinEditDistance(query, item.representer)
-            if (distance < 3) {
+            if (distance < 20) {
                 result.push({item: item, rank: distance})
             }
         }

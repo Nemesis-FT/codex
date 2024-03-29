@@ -13,6 +13,7 @@ import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import OverPanel from "../../Bricks/OverPanel";
 
 function WorldDetails(props) {
 
@@ -49,55 +50,68 @@ function WorldDetails(props) {
                 </div>
             }
             <h3>World details</h3>
-            <Panel>
-                <h3>General information</h3>
-                <ListGroup>
-                    <ListGroup.Item key="name">
-                        Name: {target.world.name}
-                    </ListGroup.Item>
-                    <ListGroup.Item key="owner">
-                        Owner: {target.creator.username}
-                    </ListGroup.Item>
-                    <ListGroup.Item key="id">
-                        UUID: {target.world.uid}
-                    </ListGroup.Item>
-                </ListGroup>
-                <h5>Description</h5>
-                <MDEditor.Markdown source={target.world.description} style={mdestyle}/>
-            </Panel>
-            {settings.length !== 0 && <div className={Style.Spacing}>
-                <Accordion>
-                    <Accordion.Item eventKey={target.world.uid}>
-                        <Accordion.Header>Events</Accordion.Header>
-                        <Accordion.Body>
-                            {settings.map(elem =>
-                                <Panel key={elem.uid}>
-                                    <Row>
-                                        <Col xs={1}>
-                                            {elem.timeframe}
-                                        </Col>
-                                        <Col>
-                                            <MDEditor.Markdown source={elem.description}
-                                                               style={mdestyle}/>
-                                        </Col>
-                                        <Col xs={1}>
-                                            <FontAwesomeIcon onClick={event => {
-                                                setBread([...bread, new Bread(target.world.name, target.world.uid, "world", target.world,
-                                                    {
-                                                        type: "setting",
-                                                        campaign: {...elem},
-                                                        uid: elem.uid,
-                                                        representer: elem.timeframe
-                                                    })])
-                                            }} icon={faSearch}/>
-                                        </Col>
-                                    </Row>
-                                </Panel>
-                            )}
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-            </div>}
+            <Row>
+                <Col>
+                    <Panel>
+                        <h3>General information</h3>
+                        <ListGroup>
+                            <ListGroup.Item key="name">
+                                Name: {target.world.name}
+                            </ListGroup.Item>
+                            <ListGroup.Item key="owner">
+                                Owner: {target.creator.username}
+                            </ListGroup.Item>
+                            <ListGroup.Item key="id">
+                                UUID: {target.world.uid}
+                            </ListGroup.Item>
+                        </ListGroup>
+                    </Panel>
+                </Col>
+                <Col>
+                    <OverPanel>
+                        <div className={Style.Spacing}>
+                            <Accordion>
+                                <Accordion.Item eventKey={target.world.uid}>
+                                    <Accordion.Header>Description</Accordion.Header>
+                                    <Accordion.Body>
+                                        <div style={{"overflow-y": "scroll", "max-height": "15rem"}}>
+                                            <MDEditor.Markdown source={target.world.description} style={mdestyle}/>
+                                        </div>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        </div>
+                        {settings.length !== 0 && <div className={Style.Spacing}>
+                            <Accordion>
+                                <Accordion.Item eventKey={target.world.uid}>
+                                    <Accordion.Header>Events</Accordion.Header>
+                                    <Accordion.Body>
+                                        <div style={{"overflow-y": "scroll", "max-height": "15rem"}}>
+                                            {settings.map(elem =>
+                                                <Panel key={elem.uid}>
+                                                    <h5>
+                                                        {elem.timeframe} <FontAwesomeIcon onClick={event => {
+                                                        setBread([...bread, new Bread(target.world.name, target.world.uid, "world", target.world,
+                                                            {
+                                                                type: "setting",
+                                                                campaign: {...elem},
+                                                                uid: elem.uid,
+                                                                representer: elem.timeframe
+                                                            })])
+                                                    }} icon={faSearch}/>
+                                                    </h5>
+                                                    <MDEditor.Markdown source={elem.description}
+                                                                       style={mdestyle}/>
+                                                </Panel>
+                                            )}
+                                        </div>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        </div>}
+                    </OverPanel>
+                </Col>
+            </Row>
             {target.world.based_on === null &&
                 <Button variant={"light"} onClick={setParent({
                     type: "world",

@@ -114,7 +114,7 @@ function DetailsTab(props) {
                     {data.type === "setting" && <SettingDetails target={data}/>}
                     {data.type === "world" && <WorldDetails target={data}/>}
                 </>}
-                {done === false && <p>Please wait, now loading...</p>}
+                {done === false && <Panel>Please wait, now loading content...</Panel>}
                 </>}
                 {error === true && <Panel>The resource cannot be loaded.</Panel>}
             </BreadContext.Provider>

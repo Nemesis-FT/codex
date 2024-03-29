@@ -13,6 +13,7 @@ import Style from "./CharacterDetails.module.css"
 import {mdestyle} from "../../Bricks/MDEStyle";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import OverPanel from "../../Bricks/OverPanel";
 
 function CampaignDetails(props) {
 
@@ -27,90 +28,109 @@ function CampaignDetails(props) {
     return (
         <div>
             <h3>Campaign details</h3>
-            <Panel>
-                <h3>General information</h3>
-                <Row className={Style.Spacing}>
-                    <Col>
-                        <ListGroup>
-                            <ListGroup.Item key="name">
-                                Name: {target.campaign.name}
-                            </ListGroup.Item>
-                            <ListGroup.Item key="lifetime">
-                                Start date/End
-                                date: {target.campaign.start_date}/{target.campaign.end_date}
-                            </ListGroup.Item>
-                            <ListGroup.Item key="dm">
-                                Master: {target.dm.username}
-                            </ListGroup.Item>
-                            <ListGroup.Item key="members">
-                                Members: {target.members.map(elem => {
-                                return elem.username
-                            })}
-                            </ListGroup.Item>
-                            <ListGroup.Item key="id">
-                                UUID: {target.campaign.uid}
-                            </ListGroup.Item>
-                        </ListGroup>
-                    </Col>
-                    <Col>
-                        <MDEditor.Markdown source={target.campaign.synopsis}
-                                           style={mdestyle}/>
-                    </Col>
-                </Row>
-                <MDEditor.Markdown source={target.campaign.retelling} style={mdestyle}/>
-            </Panel>
-            {target.happenings.length !== 0 && <div className={Style.Spacing}>
-                <Accordion>
-                    <Accordion.Item eventKey={target.campaign.uid}>
-                        <Accordion.Header>Happenings</Accordion.Header>
-                        <Accordion.Body>
-                            {target.happenings.map(elem =>
-                                <Panel key={elem.character.uid}>
-                                    <Row>
-                                        <Col>
-                                            <MDEditor.Markdown source={elem.character_history.content}
-                                                               style={mdestyle}/>
-                                        </Col>
-                                        <Col xs={1}>
-                                            <FontAwesomeIcon icon={faSearch} onClick={event => {
-                                                setBread([...bread, new Bread(target.campaign.name, target.campaign.uid, "campaign", target.campaign,
-                                                    {type: "character", character: {...elem.character}, uid: elem.character.uid, representer: elem.character.name})])
-                                            }}/>
-                                        </Col>
-                                    </Row>
-                                </Panel>
-                            )}
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-            </div>}
+            <Row>
+                <Col>
+                    <Panel>
+                        <h3>General information</h3>
+                                <ListGroup>
+                                    <ListGroup.Item key="name">
+                                        Name: {target.campaign.name}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item key="lifetime">
+                                        Start date/End
+                                        date: {target.campaign.start_date}/{target.campaign.end_date}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item key="dm">
+                                        Master: {target.dm.username}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item key="members">
+                                        Members: {target.members.map(elem => {
+                                        return elem.username
+                                    })}
+                                    </ListGroup.Item>
+                                    <ListGroup.Item key="id">
+                                        UUID: {target.campaign.uid}
+                                    </ListGroup.Item>
+                                </ListGroup>
+                                <MDEditor.Markdown source={target.campaign.synopsis}
+                                                   style={mdestyle}/>
+                    </Panel>
+                </Col>
+                <Col>
+                    <OverPanel>
+                        <div className={Style.Spacing}>
+                            <Accordion>
+                                <Accordion.Item eventKey={target.campaign.uid}>
+                                    <Accordion.Header>Retelling</Accordion.Header>
+                                    <Accordion.Body>
+                                        <div style={{"overflow-y": "scroll", "max-height": "15rem"}}>
+                                            <MDEditor.Markdown source={target.campaign.retelling} style={mdestyle}/>
+                                        </div>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        </div>
+                        {target.happenings.length !== 0 && <div className={Style.Spacing}>
+                            <Accordion>
+                                <Accordion.Item eventKey={target.campaign.uid}>
+                                    <Accordion.Header>Happenings</Accordion.Header>
+                                    <Accordion.Body>
+                                        <div style={{"overflow-y": "scroll", "max-height": "15rem"}}>
+                                            {target.happenings.map(elem =>
+                                                <Panel key={elem.character.uid}>
+                                                    <h5>
+                                                        {elem.character.name} <FontAwesomeIcon icon={faSearch}
+                                                                                               onClick={event => {
+                                                                                                   setBread([...bread, new Bread(target.campaign.name, target.campaign.uid, "campaign", target.campaign,
+                                                                                                       {
+                                                                                                           type: "character",
+                                                                                                           character: {...elem.character},
+                                                                                                           uid: elem.character.uid,
+                                                                                                           representer: elem.character.name
+                                                                                                       })])
+                                                                                               }}/>
+                                                    </h5>
+                                                    <MDEditor.Markdown source={elem.character_history.content}
+                                                                       style={mdestyle}/>
+                                                </Panel>
+                                            )}
+                                        </div>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        </div>}
 
-            {target.setting.length !== 0 && <div className={Style.Spacing}>
-                <Accordion>
-                    <Accordion.Item eventKey={target.campaign.uid}>
-                        <Accordion.Header>Campaign setting</Accordion.Header>
-                        <Accordion.Body>
-                            {target.setting.map(elem =>
-                                <Panel key={elem.uid}>
-                                    <Row>
-                                        <Col xs={1}>{elem.timeframe}</Col>
-                                        <Col>
-                                            <MDEditor.Markdown source={elem.description}
-                                                               style={mdestyle}/>
-                                        </Col>
-                                        <Col xs={1}>
-                                            <FontAwesomeIcon icon={faSearch} onClick={event => {
-                                                setBread([...bread, new Bread(target.campaign.name, target.campaign.uid, "campaign", target.campaign.name,
-                                                    {type: "setting", setting: {...elem}, uid: elem.uid, representer: elem.timeframe})])
-                                            }}/>
-                                        </Col>
-                                    </Row>
-                                </Panel>
-                            )}
-                        </Accordion.Body>
-                    </Accordion.Item>
-                </Accordion>
-            </div>}
+                        {target.setting.length !== 0 && <div className={Style.Spacing}>
+                            <Accordion>
+                                <Accordion.Item eventKey={target.campaign.uid}>
+                                    <Accordion.Header>Campaign setting</Accordion.Header>
+                                    <Accordion.Body>
+                                        <div style={{"overflow-y": "scroll", "max-height": "15rem"}}>
+                                            {target.setting.map(elem =>
+                                                <Panel key={elem.uid}>
+                                                    <h5>{elem.timeframe} <FontAwesomeIcon icon={faSearch}
+                                                                                          onClick={event => {
+                                                                                              setBread([...bread, new Bread(target.campaign.name, target.campaign.uid, "campaign", target.campaign.name,
+                                                                                                  {
+                                                                                                      type: "setting",
+                                                                                                      setting: {...elem},
+                                                                                                      uid: elem.uid,
+                                                                                                      representer: elem.timeframe
+                                                                                                  })])
+                                                                                          }}/></h5>
+                                                    <MDEditor.Markdown source={elem.description}
+                                                                       style={mdestyle}/>
+
+                                                </Panel>
+                                            )}
+                                        </div>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
+                        </div>}
+                    </OverPanel>
+                </Col>
+            </Row>
         </div>
     );
 

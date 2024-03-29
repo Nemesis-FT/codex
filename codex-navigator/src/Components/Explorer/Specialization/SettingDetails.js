@@ -63,26 +63,20 @@ function SettingDetails(props) {
                         <Accordion.Body>
                             {target.campaigns.map(elem =>
                                 <Panel key={elem.uid}>
-                                    <Row>
-                                        <Col xs={1}>
-                                            {elem.name}
-                                        </Col>
-                                        <Col>
+
+                                        <h5>
+                                            {elem.name}                                        <FontAwesomeIcon icon={faSearch} onClick={event => {
+                                            setBread([...bread, new Bread(target.setting.timeframe, target.setting.uid, "setting", target.setting,
+                                                {
+                                                    type: "campaign",
+                                                    campaign: {...elem},
+                                                    uid: elem.uid,
+                                                    representer: elem.name
+                                                })])
+                                        }}/>
+                                        </h5>
                                             <MDEditor.Markdown source={elem.synopsis}
                                                                style={mdestyle}/>
-                                        </Col>
-                                        <Col xs={1}>
-                                            <FontAwesomeIcon icon={faSearch} onClick={event => {
-                                                setBread([...bread, new Bread(target.setting.timeframe, target.setting.uid, "setting", target.setting,
-                                                    {
-                                                        type: "campaign",
-                                                        campaign: {...elem},
-                                                        uid: elem.uid,
-                                                        representer: elem.name
-                                                    })])
-                                            }}/>
-                                        </Col>
-                                    </Row>
                                 </Panel>
                             )}
                         </Accordion.Body>

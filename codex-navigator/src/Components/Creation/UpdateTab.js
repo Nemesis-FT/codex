@@ -29,7 +29,7 @@ function CreateTab() {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if(response.statusCode!==200){
+            if(response.status!==200){
                 throw Error
             }
             let data = await response.json()
