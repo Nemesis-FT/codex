@@ -111,6 +111,9 @@ function CharacterPanel(props) {
     }
 
     async function create_character() {
+        setSent(true)
+        setAlertText("Saving data, please wait...")
+        setAlertVariant("light")
         let b_id = ""
         let o_over = ""
         if (baseChar) {
@@ -157,7 +160,6 @@ function CharacterPanel(props) {
                 })
             });
         }
-        setSent(true)
         if (response.status === 201 || response.status === 200) {
             let data = await response.json()
             let tmpChars = chosenChars;
@@ -182,22 +184,20 @@ function CharacterPanel(props) {
 
                 }
             }
-            else{
-                console.debug("Setting up relationships...")
-                for (const cha of tmpChars) {
-                    response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/" + data.uid + "/relationship/" + cha.selection.uid, {
-                        method: "POST",
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                            'Accept': "application/json"
-                        },
-                        body: JSON.stringify({
-                            content: cha.content
-                        })
-                    });
-                    console.debug("Set up relationship with " + cha.pg_name + " (" + cha.content + ")")
-                }
+            console.debug("Setting up relationships...")
+            for (const cha of tmpChars) {
+                response = await fetch(window.location.protocol + "//" + address + "/api/character/v1/" + data.uid + "/relationship/" + cha.selection.uid, {
+                    method: "POST",
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': "application/json"
+                    },
+                    body: JSON.stringify({
+                        content: cha.content
+                    })
+                });
+                console.debug("Set up relationship with " + cha.pg_name + " (" + cha.content + ")")
             }
             setAlertText("Data saved!")
             setAlertVariant("light")
@@ -218,7 +218,7 @@ function CharacterPanel(props) {
         <div className={Style.Scrollable}>
             <h4>Basic information</h4>
             <Form>
-                {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
+
 
                 <Form.Group as={Row} className="mb-3">
                     <Form.Label column sm={2}>
@@ -322,6 +322,7 @@ function CharacterPanel(props) {
                 <RelationshipBuilder selectedList={chosenChars} setSelectedList={setChosenChars}
                                      representer={"pg_name"}/>
             </Panel>
+            {sent && <Alert variant={alertVariant}>{alertText}</Alert>}
             <Button variant="light" onClick={create_character}>Save this content</Button>
         </div>
     );

@@ -20,10 +20,7 @@ class UserEdit(base.ORMModel):
     """
     **Edit** model for :class:`.database.models.User`.
     """
-
-    email: str
     username: str
-    password: str
 
 
 class WorldEdit(base.ORMModel):

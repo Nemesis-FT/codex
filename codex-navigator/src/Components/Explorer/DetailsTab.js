@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Panel from "../Bricks/Panel";
 import {Breadcrumb, Dropdown, Row} from "react-bootstrap";
 import Col from "react-bootstrap/Col";
@@ -17,6 +17,8 @@ import SettingDetails from "./Specialization/SettingDetails";
 import WorldDetails from "./Specialization/WorldDetails";
 
 import {useBreadContext} from "../../libs/Context";
+import {useNavigate} from "react-router-dom";
+import navi from "../Navi";
 
 export class Bread {
     constructor(representer, uid, type, data, next_data) {
@@ -34,9 +36,13 @@ function DetailsTab(props) {
     const [done, setDone] = useState(false)
     const [parent, setParent] = useState(props.parent)
     const [bread, setBread] = useState([])
+    const navigate = useNavigate()
+    const [error, setError] = useState(false)
 
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
+
+    let lookup = {"character": "chr", "campaign":"cmp", "world":"wrl", "setting":"stt"}
 
     useEffect(() => {
         setDone(false)
@@ -49,24 +55,38 @@ function DetailsTab(props) {
     }, [bread])
 
     async function gather_more(target) {
-        const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        let d = await response.json();
-        d.type = target.type
-        d.representer = target.representer
+        if(target === null){
+            return
+        }
+        try{
+            const response = await fetch(window.location.protocol + "//" + address + "/api/" + target.type + "/v1/" + target.uid, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-        setData(d)
+            let d = await response.json();
+            d.type = target.type
+            d.representer = target.representer
+
+            setData(d)
+        }
+        catch (e) {
+            setError(true)
+        }
+
     }
-
     return (
         <div>
+            <br/>
             <BreadContext.Provider value={{setBread, bread, data, setData}}>
                 <Breadcrumb>
                     <Breadcrumb.Item href="#" onClick={e => {
-                        props.setMode("search")
+                        if (props.setMode !== undefined) {
+                            props.setMode("search")
+                        } else {
+                            navigate("/srv/home")
+                        }
                     }}>
                         Search
                     </Breadcrumb.Item>
@@ -87,14 +107,25 @@ function DetailsTab(props) {
                         }>{elem.representer}</Breadcrumb.Item>
                     })}
                 </Breadcrumb>
+                {error === false && <>
                 {done === true && <>
                     {data.type === "character" && <CharacterDetails target={data}/>}
                     {data.type === "campaign" && <CampaignDetails target={data}/>}
                     {data.type === "setting" && <SettingDetails target={data}/>}
                     {data.type === "world" && <WorldDetails target={data}/>}
                 </>}
-                {done === false && <p>Please wait, now loading...</p>}
+                {done === false && <Panel>Please wait, now loading content...</Panel>}
+                </>}
+                {error === true && <Panel>The resource cannot be loaded.</Panel>}
             </BreadContext.Provider>
+            <br/>
+            <a href="#" onClick={event => {
+                navigator.share({
+                    url: window.location.origin + "/" + address + "/specific/" + lookup[data.type] + "/" + data[data.type].uid,
+                    text: "Check out " + data.representer + " on Codex",
+                    title: data.representer
+                })
+            }}>Share permalink</a>
         </div>)
 
 }

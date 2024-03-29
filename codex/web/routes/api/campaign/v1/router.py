@@ -20,14 +20,14 @@ router = fastapi.routing.APIRouter(
 @router.get("/",
             summary="Get the list of campaigns",
             status_code=200, response_model=t.List[CampaignRead])
-def campaigns_get(*, current_user=Depends(get_current_user)):
+def campaigns_get():
     return Campaign.nodes.all()
 
 
 @router.get("/{campaign_id}",
             summary="Get data about a specific campaign",
             status_code=200, response_model=CampaignFull)
-def campaign_get(*, campaign_id: str, current_user=Depends(get_current_user)):
+def campaign_get(*, campaign_id: str):
     c = Campaign.nodes.get(uid=campaign_id)
     return CampaignFull(campaign=c, members=c.members.all(), dm=c.dm.all()[0], setting=c.setting.all(),
                         happenings=[CampaignHistory(character_history=

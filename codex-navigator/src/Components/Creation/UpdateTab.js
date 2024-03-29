@@ -18,16 +18,26 @@ function CreateTab() {
     const [target, setTarget] = useState(null)
     const {address, setAddress} = useAppContext()
     const {token, setToken} = useAppContext()
+    const [error, setError] = useState(false)
 
     async function get_data(){
-        setTarget(null)
-        const response = await fetch(window.location.protocol + "//" + address + "/api/" + mode.toLowerCase() + "/v1/"+uuid, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        let data = await response.json()
-        setTarget({type:mode.toLowerCase(), data:data})
+        setError(false)
+        try{
+            setTarget(null)
+            const response = await fetch(window.location.protocol + "//" + address + "/api/" + mode.toLowerCase() + "/v1/"+uuid, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if(response.status!==200){
+                throw Error
+            }
+            let data = await response.json()
+            setTarget({type:mode.toLowerCase(), data:data})
+        } catch (e) {
+            setError(true)
+        }
+
     }
 
     return (
@@ -66,6 +76,7 @@ function CreateTab() {
                         <Col>
                             <Button variant="light" onClick={get_data}>Go</Button>
                         </Col>
+                        {error === true && <Panel>What you're looking for does not exist.</Panel>}
                     </Form.Group>
                     {target && <div>
                         {target.type==="setting" && <SettingPanel data={target.data}/>}

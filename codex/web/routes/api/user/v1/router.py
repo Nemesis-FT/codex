@@ -28,28 +28,3 @@ def users_get(*, current_user=Depends(get_current_user)):
 def user_get(*, current_user=Depends(get_current_user)):
     return UserFull(user=current_user, characters=current_user.characters.all(), worlds=current_user.worlds.all(),
                     settings=current_user.settings.all(), campaigns=current_user.campaigns.all())
-
-
-@router.post("/",
-             summary="Create a new user",
-             status_code=201, response_model=UserRead
-             )
-def user_create(*, data: UserEdit, current_user: User = Depends(get_current_user)):
-    if not current_user.isAdmin:
-        raise Denied
-    return quick_create(
-        User(email=data.email, password=bcrypt.hashpw(bytes(data.password, encoding="utf-8"), bcrypt.gensalt()),
-             username=data.username))
-
-
-@router.put("/{user_id}",
-            summary="Edit a selected user",
-            status_code=200, response_model=UserRead)
-def user_edit(*, user_id: str, data: UserEdit, current_user: User = Depends(get_current_user)):
-    user = User.nodes.get(uid=user_id)
-    if user.id != current_user.id:
-        raise Denied
-    user.password = bcrypt.hashpw(bytes(data.password, encoding="utf-8"), bcrypt.gensalt())
-    user.email = data.email
-    user.save()
-    return user
