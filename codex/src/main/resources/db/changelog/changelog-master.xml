@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="initial" author="lorenzo.balugani">
+        <createTable tableName="USR">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="EXT_ID" type="VARCHAR(32)"/>
+            <column name="USERNAME" type="VARCHAR(128)"/>
+            <column name="FL_ADMIN" type="BOOLEAN"/>
+        </createTable>
+        <createTable tableName="CHARACTER">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="NAME" type="VARCHAR(64)">
+
+            </column>
+            <column name="RACE" type="VARCHAR(32)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="BACKSTORY" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="DOB" type="bigint"/>
+            <column name="DOD" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="USR_ID" type="bigint"/>
+            <column name="EXT_CHAR_ID" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="CHARACTER" baseColumnNames="USR_ID" constraintName="CHAR_USR_FK"
+                                 referencedTableName="USR"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="CHARACTER" baseColumnNames="EXT_CHAR_ID" constraintName="CHAR_EXT_ID"
+                                 referencedTableName="CHARACTER"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="CHAR_J_CHAR">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="LEFT_CHAR_ID" type="bigint">
+            </column>
+            <column name="RIGHT_CHAR_ID" type="bigint">
+            </column>
+            <column name="KIND" type="VARCHAR(32)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="CHAR_J_CHAR" baseColumnNames="LEFT_CHAR_ID"
+                                 constraintName="CHAR_J_CHAR_LEFT"
+                                 referencedTableName="CHARACTER"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="CHAR_J_CHAR" baseColumnNames="RIGHT_CHAR_ID"
+                                 constraintName="CHAR_J_CHAR_RIGHT"
+                                 referencedTableName="CHARACTER"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="CAMPAIGN">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(128)"/>
+            <column name="START_DATE" type="DATE"/>
+            <column name="END_DATE" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="SYNOPSIS" type="TEXT"/>
+            <column name="RETELLING" type="TEXT"/>
+            <column name="MASTER_USR_ID" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="CAMPAIGN" baseColumnNames="MASTER_USR_ID"
+                                 constraintName="CAMPAIGN_MASTER"
+                                 referencedTableName="USR"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="USR_J_CAMPAIGN">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="USR_ID" type="bigint">
+            </column>
+            <column name="CAMPAIGN_ID" type="bigint">
+            </column>
+            <column name="CHARACTER_ID" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="USR_J_CAMPAIGN" baseColumnNames="USR_ID" constraintName="USR_CAMPAIGN_J"
+                                 referencedTableName="USR"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="USR_J_CAMPAIGN" baseColumnNames="CAMPAIGN_ID"
+                                 constraintName="CAMPAIGN_J"
+                                 referencedTableName="CAMPAIGN"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="USR_J_CAMPAIGN" baseColumnNames="CHARACTER_ID"
+                                 constraintName="CAMPAIGN_J_CHARACTER"
+                                 referencedTableName="CHARACTER"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="CHAR_HIST">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CHAR_ID" type="bigint"/>
+            <column name="CAMPAIGN_ID" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TIMEFRAME" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ORDER" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CONTENT" type="TEXT"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="CHAR_HIST" baseColumnNames="CHAR_ID" constraintName="CHAR_HIST_CHAR"
+                                 referencedTableName="CHARACTER"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="CHAR_HIST" baseColumnNames="CAMPAIGN_ID"
+                                 constraintName="CHAR_HIST_CAMPAIGN"
+                                 referencedTableName="CAMPAIGN"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="WORLD">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(64)"/>
+            <column name="DESCRIPTION" type="TEXT"/>
+            <column name="EXT_WORLD_ID" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OWNER_USR_ID" type="bigint"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="WORLD" baseColumnNames="EXT_WORLD_ID" constraintName="WORLD_EXTENSION" referencedTableName="WORLD"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="WORLD" baseColumnNames="OWNER_USR_ID" constraintName="WORLD_USR_ID"
+                                 referencedTableName="USR"
+                                 referencedColumnNames="ID"/>
+
+        <createTable tableName="SETTING">
+            <column name="ID" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="TIMEFRAME_START" type="bigint"/>
+            <column name="TIMEFRAME_END" type="bigint"/>
+            <column name="CONTENT" type="text"/>
+            <column name="OWNER_USR_ID" type="bigint"/>
+            <column name="WORLD_ID" type="bigint"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="SETTING" baseColumnNames="OWNER_USR_ID" constraintName="SETTING_OWNER"
+                                 referencedTableName="USR"
+                                 referencedColumnNames="ID"/>
+        <addForeignKeyConstraint baseTableName="SETTING" baseColumnNames="WORLD_ID" constraintName="SETTING_WORLD"
+                                 referencedTableName="WORLD"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+</databaseChangeLog>
