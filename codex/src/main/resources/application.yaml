@@ -6,7 +6,7 @@ spring:
     name: codex
   datasource:
     url: jdbc:postgresql://localhost:5432/codex
-    username: codex
+    username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -14,3 +14,23 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/changelog-master.xml
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: ${authmaster.url}/oauth/introspect
+          client-id: ${AUTHMASTER_CLIENT_ID}
+          client-secret: ${AUTHMASTER_CLIENT_SECRET}
+
+authmaster:
+  url: ${AUTHMASTER_URL:http://localhost:8000}
+
+springdoc:
+  swagger-ui:
+    persist-authorization: true
+    oauth:
+      # Public AuthMaster client (token_endpoint_auth_method: none) with redirect URI
+      # http://localhost:8081/swagger-ui/oauth2-redirect.html
+      client-id: ${AUTHMASTER_SWAGGER_CLIENT_ID:}
+      use-pkce-with-authorization-code-grant: true
+      scopes: Profile

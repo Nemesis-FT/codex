@@ -1,6 +1,7 @@
 package dev.fermitech.codex.controllers;
 
 import dev.fermitech.codex.controllers.dto.UserDTO;
+import dev.fermitech.codex.controllers.dto.UsrDTO;
 import dev.fermitech.codex.controllers.dto.edit.UserEditDTO;
 import dev.fermitech.codex.models.User;
 import dev.fermitech.codex.services.UserService;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +53,10 @@ public class UserController {
     @PostMapping("")
     public UserDTO createUser(@RequestBody UserEditDTO userEdit){
         return userMapper.toDTO(userService.create(userEditMapper.toDAO(userEdit)));
+    }
+
+    @GetMapping("/me")
+    public UsrDTO me(@AuthenticationPrincipal OAuth2AuthenticatedPrincipal principal) {
+        return userService.getByExtId(principal.getName());
     }
 }
